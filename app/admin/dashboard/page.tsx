@@ -1,0 +1,492 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { motion, Variants } from 'framer-motion'
+import { supabase } from '@/lib/supabase/supabase'
+
+// ─── TYPES ───────────────────────────────────────────────────────────────────
+type Appointment = {
+  id: string
+  name: string
+  phone: string
+  age: string
+  date: string
+  day_preference: string
+  slot: string
+  reason: string
+  status: 'pending' | 'confirmed' | 'cancelled'
+  created_at: string
+}
+
+type FilterStatus = 'all' | 'pending' | 'confirmed' | 'cancelled'
+
+// ─── ANIMATION VARIANTS ────────────────────────────────────────────────────────
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
+  },
+}
+
+// ─── HELPER FUNCTIONS ───────────────────────────────────────────────────────────
+function formatDate(dateStr: string) {
+  if (!dateStr) return ''
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('en-IN', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+}
+
+function getStatusColor(status: string) {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-700'
+    case 'confirmed':
+      return 'bg-green-100 text-green-700'
+    case 'cancelled':
+      return 'bg-red-100 text-red-700'
+    default:
+      return 'bg-gray-100 text-gray-700'
+  }
+}
+
+// ─── COMPONENTS ───────────────────────────────────────────────────────────────
+function StatsCard({ 
+  label, 
+  value, 
+  icon, 
+  color = 'sage' 
+}: { 
+  label: string
+  value: number
+  icon: string
+  color?: 'sage' | 'yellow' | 'green' | 'red'
+}) {
+  const bgColor = color === 'sage' ? 'bg-sage-100' : 
+                   color === 'yellow' ? 'bg-yellow-100' :
+                   color === 'green' ? 'bg-green-100' : 'bg-red-100'
+
+  return (
+    <div className="bg-white border border-sage-100 rounded-xl p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-3xl font-display text-sage-800">{value}</p>
+          <p className="text-sm text-sage-600">{label}</p>
+        </div>
+        <div className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center text-2xl`}>
+          {icon}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
+      {status.charAt(0).toUpperCase() + status.slice(1)}
+    </span>
+  )
+}
+
+function FilterTabs({ 
+  activeFilter, 
+  onFilterChange 
+}: { 
+  activeFilter: FilterStatus
+  onFilterChange: (filter: FilterStatus) => void 
+}) {
+  const filters: { value: FilterStatus; label: string }[] = [
+    { value: 'all', label: 'All' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'confirmed', label: 'Confirmed' },
+    { value: 'cancelled', label: 'Cancelled' },
+  ]
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {filters.map((filter) => (
+        <button
+          key={filter.value}
+          onClick={() => onFilterChange(filter.value)}
+          className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
+            activeFilter === filter.value
+              ? 'bg-sage-600 text-white border-sage-600'
+              : 'bg-white text-sage-600 border-sage-200 hover:border-sage-400 hover:bg-sage-50'
+          }`}
+        >
+          {filter.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function DateRangeFilter({ 
+  fromDate, 
+  toDate, 
+  onFromDateChange, 
+  onToDateChange 
+}: {
+  fromDate: string
+  toDate: string
+  onFromDateChange: (date: string) => void
+  onToDateChange: (date: string) => void
+}) {
+  return (
+    <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex-1">
+        <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 block mb-1.5">
+          From Date
+        </label>
+        <input
+          type="date"
+          value={fromDate}
+          onChange={(e) => onFromDateChange(e.target.value)}
+          className="w-full border border-sage-200 rounded-xl px-3 py-2 text-sm text-sage-800 bg-white focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all"
+        />
+      </div>
+      <div className="flex-1">
+        <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 block mb-1.5">
+          To Date
+        </label>
+        <input
+          type="date"
+          value={toDate}
+          onChange={(e) => onToDateChange(e.target.value)}
+          className="w-full border border-sage-200 rounded-xl px-3 py-2 text-sm text-sage-800 bg-white focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all"
+        />
+      </div>
+    </div>
+  )
+}
+
+function AppointmentCard({ 
+  appointment, 
+  onConfirm, 
+  onCancel 
+}: { 
+  appointment: Appointment
+  onConfirm: (id: string) => void
+  onCancel: (id: string) => void
+}) {
+  return (
+    <motion.div
+      variants={fadeUp}
+      className="bg-white border border-sage-100 rounded-xl p-5"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="font-display text-xl text-sage-800 mb-1">{appointment.name}</h3>
+          <p className="text-sm text-sage-600">{appointment.phone} • {appointment.age} years</p>
+        </div>
+        <StatusBadge status={appointment.status} />
+      </div>
+      
+      <div className="space-y-2 text-sm text-sage-600 mb-4">
+        <p className="flex items-center gap-2">
+          📅 {formatDate(appointment.date)}
+        </p>
+        <p className="flex items-center gap-2">
+          ⏰ {appointment.slot}
+        </p>
+        {appointment.day_preference && appointment.day_preference !== 'Any' && (
+          <p className="flex items-center gap-2">
+            📅 {appointment.day_preference}
+          </p>
+        )}
+        {appointment.reason && appointment.reason !== 'Not specified' && (
+          <p className="flex items-start gap-2">
+            📝 <span className="line-clamp-2">{appointment.reason}</span>
+          </p>
+        )}
+      </div>
+
+      {appointment.status === 'pending' && (
+        <div className="flex gap-2">
+          <button
+            onClick={() => onConfirm(appointment.id)}
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-sage-700 transition-colors"
+          >
+            ✓ Confirm
+          </button>
+          <button
+            onClick={() => onCancel(appointment.id)}
+            className="flex-1 inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sage-50 transition-colors"
+          >
+            ✕ Cancel
+          </button>
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+export default function AdminDashboard() {
+  const router = useRouter()
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [activeFilter, setActiveFilter] = useState<FilterStatus>('all')
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
+
+  // ─── AUTHENTICATION CHECK ───────────────────────────────────────────────────
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (!session) {
+          router.push('/admin/login')
+          return
+        }
+
+        // Load appointments after auth check
+        await loadAppointments()
+
+        // Set up real-time subscription after appointments are loaded
+        const channel = supabase
+          .channel('appointments')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'appointments',
+            },
+            (payload) => {
+              if (payload.eventType === 'INSERT') {
+                setAppointments(prev => [payload.new as Appointment, ...prev])
+              } else if (payload.eventType === 'UPDATE') {
+                setAppointments(prev => 
+                  prev.map(apt => 
+                    apt.id === payload.new?.id ? payload.new as Appointment : apt
+                  )
+                )
+              } else if (payload.eventType === 'DELETE') {
+                setAppointments(prev => prev.filter(apt => apt.id !== payload.old?.id))
+              }
+            }
+          )
+          .subscribe()
+
+        return () => {
+          supabase.removeChannel(channel)
+        }
+      } catch (error) {
+        console.error('Auth check error:', error)
+        router.push('/admin/login')
+      }
+    }
+
+    checkAuth()
+  }, [router])
+
+  // ─── LOAD APPOINTMENTS ───────────────────────────────────────────────────────
+  async function loadAppointments() {
+    try {
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      
+      setAppointments(data || [])
+    } catch (error) {
+      console.error('Error loading appointments:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ─── FILTERING ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    let filtered = appointments
+
+    // Status filter
+    if (activeFilter !== 'all') {
+      filtered = filtered.filter(apt => apt.status === activeFilter)
+    }
+
+    // Date range filter
+    if (fromDate) {
+      filtered = filtered.filter(apt => apt.date >= fromDate)
+    }
+    if (toDate) {
+      filtered = filtered.filter(apt => apt.date <= toDate)
+    }
+
+    setFilteredAppointments(filtered)
+  }, [appointments, activeFilter, fromDate, toDate])
+
+  // ─── ACTIONS ────────────────────────────────────────────────────────────────
+  async function handleConfirm(id: string) {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: 'confirmed' })
+        .eq('id', id)
+
+      if (error) throw error
+    } catch (error) {
+      console.error('Error confirming appointment:', error)
+    }
+  }
+
+  async function handleCancel(id: string) {
+    try {
+      const { error } = await supabase
+        .from('appointments')
+        .update({ status: 'cancelled' })
+        .eq('id', id)
+
+      if (error) throw error
+    } catch (error) {
+      console.error('Error cancelling appointment:', error)
+    }
+  }
+
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut()
+      router.push('/admin/login')
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
+
+  // ─── STATS CALCULATION ───────────────────────────────────────────────────────
+  const stats = {
+    total: appointments.length,
+    pending: appointments.filter(apt => apt.status === 'pending').length,
+    confirmed: appointments.filter(apt => apt.status === 'confirmed').length,
+    cancelled: appointments.filter(apt => apt.status === 'cancelled').length,
+  }
+
+  // ─── LOADING STATE ───────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#faf7f2]">
+        <div className="text-center py-32">
+          <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg className="animate-spin w-6 h-6 text-sage-600" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+            </svg>
+          </div>
+          <p className="text-sm text-sage-600">Loading dashboard...</p>
+        </div>
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-[#faf7f2]">
+      {/* Header */}
+      <div className="sticky top-0 z-50 bg-[#faf7f2]/90 backdrop-blur-sm border-b border-sage-100">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div>
+            <h1 className="font-display text-2xl text-sage-800">Doctor Dashboard</h1>
+            <p className="text-sm text-sage-600">Ashabi Clinic</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sage-50 transition-colors"
+          >
+            Sign Out →
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        {/* Stats Cards */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+        >
+          <StatsCard label="Total Appointments" value={stats.total} icon="📋" />
+          <StatsCard label="Pending" value={stats.pending} icon="⏳" color="yellow" />
+          <StatsCard label="Confirmed" value={stats.confirmed} icon="✓" color="sage" />
+          <StatsCard label="Cancelled" value={stats.cancelled} icon="✕" color="red" />
+        </motion.div>
+
+        {/* Filters */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          transition={{ delay: 0.1 }}
+          className="bg-white border border-sage-100 rounded-xl p-5 mb-6"
+        >
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1">
+              <p className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 mb-3">
+                Status Filter
+              </p>
+              <FilterTabs 
+                activeFilter={activeFilter} 
+                onFilterChange={setActiveFilter} 
+              />
+            </div>
+            <div className="lg:w-80">
+              <p className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 mb-3">
+                Date Range
+              </p>
+              <DateRangeFilter
+                fromDate={fromDate}
+                toDate={toDate}
+                onFromDateChange={setFromDate}
+                onToDateChange={setToDate}
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Appointments List */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate="show"
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500">
+              Showing {filteredAppointments.length} appointment{filteredAppointments.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+
+          {filteredAppointments.length === 0 ? (
+            <div className="bg-white border border-sage-100 rounded-xl p-8 text-center">
+              <p className="text-sage-500">No appointments found</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredAppointments.map((appointment) => (
+                <AppointmentCard
+                  key={appointment.id}
+                  appointment={appointment}
+                  onConfirm={handleConfirm}
+                  onCancel={handleCancel}
+                />
+              ))}
+            </div>
+          )}
+        </motion.div>
+      </div>
+    </main>
+  )
+}
