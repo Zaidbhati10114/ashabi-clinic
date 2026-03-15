@@ -74,7 +74,7 @@ function ClaudeResult() {
               className="flex flex-col sm:flex-row gap-3"
             >
               <a
-                href="http://localhost:3000/book"
+                href="/book"
                 className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
               >
                 Book Appointment
