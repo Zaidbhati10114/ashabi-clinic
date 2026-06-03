@@ -98,13 +98,13 @@ function ClaudeResult() {
               <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-2xl bg-sage-100" />
               {/* Photo frame */}
               <div className="relative w-48 h-56 rounded-2xl overflow-hidden border-2 border-sage-200 shadow-md bg-warm">
-                {/* <Image
-                  src="https://placehold.co/192x224/e6ede6/527d52?text=Dr.+Photo"
+                <Image
+                  src="/doctor.png"
                   alt="Dr. Sahirabanu Faruk Bhati"
                   fill
                   className="object-cover"
                   priority
-                /> */}
+                />
               </div>
               {/* Badge */}
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white border border-sage-200 rounded-full px-4 py-1.5 shadow-sm whitespace-nowrap">
@@ -398,9 +398,9 @@ function ClaudeResult() {
                 <br />
                 PIN – 416 416
               </p>
-              <p className="text-xs text-sage-400 mt-3">
-                Near Shah Hospital, 100 Ft Road, Gulab Colony
-              </p>
+              {/* <p className="text-xs text-sage-400 mt-3">
+                Near Mohite Hospital, 100 Ft Road, Gulab Colony
+              </p> */}
             </motion.div>
             {/* Contact Card */}
             <motion.div

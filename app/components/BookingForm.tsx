@@ -132,7 +132,7 @@ function Field({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5 overflow-visible">
       <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500">
         {label}
       </label>
@@ -552,7 +552,7 @@ function BookingForm() {
     <div className="w-full">
       <StepIndicator current={step} />
 
-      <div className="relative overflow-hidden">
+      <div className="relative">
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div
             key={step}

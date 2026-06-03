@@ -69,12 +69,12 @@ const AshabiClinicLanding = () => {
           className="relative"
         >
           <div className="w-64 h-80 relative z-10 rounded-2xl overflow-hidden border-8 border-white shadow-2xl">
-            {/* <Image
-              src="https://via.placeholder.com/400x500"
+            <Image
+              src="/public/doctor.png"
               alt="Dr. Sahirabanu Faruk Bhati"
               fill
               className="object-cover"
-            /> */}
+            />
           </div>
           <div className="absolute -bottom-4 -right-4 w-64 h-80 bg-teal-200 rounded-2xl -z-10"></div>
         </motion.div>
