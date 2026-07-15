@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google';
 import './globals.css';
-
+import ConvexClientProvider from "../app/providers /ConvexClientProvider";
 export const metadata: Metadata = {
   title: 'Ashabi Clinic | Dr. Sahirabanu Faruk Bhati',
   description:
@@ -32,7 +32,9 @@ export default function RootLayout({
       className={`${displayFont.variable} ${bodyFont.variable}`}
     >
       <body className="font-body bg-cream antialiased">
-        {children}
+        <ConvexClientProvider>
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );

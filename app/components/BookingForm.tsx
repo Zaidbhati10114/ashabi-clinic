@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import emailjs from '@emailjs/browser'
-import { supabase } from '@/lib/supabase/supabase'
+
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
@@ -165,6 +167,10 @@ function BookingForm() {
   const [submitted, setSubmitted] = useState(false)
   const [sendError, setSendError] = useState('')       // ← NEW
 
+  const createAppointment = useMutation(
+  api.appointments.publicCreateAppointment
+);
+
   const set = (field: keyof FormData, value: string) => {
     setData((prev) => ({ ...prev, [field]: value }))
     setErrors((prev) => ({ ...prev, [field]: '' }))
@@ -204,25 +210,23 @@ function BookingForm() {
   setSendError('')
 
   const slot        = SLOTS.find((s) => s.id === data.slot)
-  const cancelToken = crypto.randomUUID()                              // ← ADD
-  const cancelLink  = `${window.location.origin}/cancel?token=${cancelToken}` // ← ADD
+ 
 
   try {
-    const { error: dbError } = await supabase
-      .from('appointments')
-      .insert({
-        name:           data.name,
-        phone:          data.phone,
-        age:            data.age,
-        date:           data.date,
-        day_preference: data.dayPreference || 'Any',
-        slot:           slot ? `${slot.label} (${slot.time})` : '',
-        reason:         data.reason || 'Not specified',
-        status:         'pending',
-        cancel_token:   cancelToken,                                   // ← ADD
-      })
+ const result = await createAppointment({
+  name: data.name,
+  phone: data.phone,
+  age: Number(data.age),
 
-    if (dbError) throw new Error(dbError.message)
+  date: data.date,
+  dayPreference: data.dayPreference || "Any",
+
+  slot: data.slot as "morning" | "evening",
+
+  reason: data.reason || "Not specified",
+});
+
+const cancelLink = `${window.location.origin}/cancel?token=${result.cancelToken}`;
 
     await emailjs.send(
       EMAILJS_SERVICE_ID,
