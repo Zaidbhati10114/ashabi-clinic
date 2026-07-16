@@ -1,6 +1,6 @@
 
 
-import { mutation,query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const publicCreateAppointment = mutation({
@@ -43,7 +43,7 @@ export const publicCreateAppointment = mutation({
     });
 
     return {
-      appointmentId:id,
+      appointmentId: id,
       cancelToken,
     };
   },
@@ -80,18 +80,18 @@ export const publicCancelAppointment = mutation({
         q.eq("cancelToken", args.cancelToken)
       )
       .unique();
-      
+
 
     if (!appointment) {
       throw new Error("Appointment not found");
     }
 
     if (appointment.status === "cancelled") {
-  return {
-    success: true,
-    alreadyCancelled: true,
-  };
-}
+      return {
+        success: true,
+        alreadyCancelled: true,
+      };
+    }
 
     await ctx.db.patch(appointment._id, {
       status: "cancelled",
@@ -102,7 +102,46 @@ export const publicCancelAppointment = mutation({
 
     return {
       success: true,
-      alreadyCancelled:false
+      alreadyCancelled: false
+    };
+  },
+});
+
+
+// Admin 
+
+export const adminListAppointments = query({
+  args: {},
+
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("appointments")
+      .withIndex("by_created_at")
+      .order("desc")
+      .collect();
+  },
+});
+
+
+export const adminUpdateAppointmentStatus = mutation({
+  args: {
+    appointmentId: v.id("appointments"),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("completed"),
+      v.literal("cancelled")
+    ),
+  },
+
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.appointmentId, {
+      status: args.status,
+      updatedAt: Date.now(),
+    });
+
+    return {
+      success: true,
     };
   },
 });
