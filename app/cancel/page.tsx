@@ -1,40 +1,63 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { motion, Variants } from 'framer-motion'
-import emailjs from '@emailjs/browser'
-import { supabase } from '@/lib/supabase/supabase'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import DoctorInfoStrip from '../components/DoctorInfoStrip'
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { motion, Variants } from "framer-motion";
+import emailjs from "@emailjs/browser";
+import { useMutation } from "convex/react";
+import { ConvexReactClient } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import DoctorInfoStrip from "../components/DoctorInfoStrip";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!;
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
+
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 const CANCEL_REASONS = [
-  'Changed plans',
-  'Feeling better', 
-  'Doctor unavailable',
-  'Other'
-]
+  "Changed plans",
+  "Feeling better",
+  "Doctor unavailable",
+  "Other",
+];
 
-type PageState = 'loading' | 'confirming' | 'not_found' | 'already_cancelled' | 'ready' | 'done' | 'error'
+type PageState =
+  | "loading"
+  | "confirming"
+  | "not_found"
+  | "already_cancelled"
+  | "ready"
+  | "done"
+  | "error";
 
 type Appointment = {
-  id: string
-  name: string
-  phone: string
-  age: string
-  date: string
-  day_preference: string
-  slot: string
-  reason: string
-  status: string
-  cancel_token: string
-}
+  _id: string;
+
+  name: string;
+  phone: string;
+  age: number;
+
+  date: string;
+  dayPreference: string;
+
+  slot: string;
+
+  reason: string;
+
+  status: "pending" | "confirmed" | "completed" | "cancelled";
+
+  cancelToken: string;
+
+  createdAt: number;
+  updatedAt: number;
+
+  cancelReason?: string;
+  cancelledAt?: number;
+};
 
 // ─── ANIMATION VARIANTS ────────────────────────────────────────────────────────
 const fadeUp: Variants = {
@@ -47,18 +70,18 @@ const fadeUp: Variants = {
       ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   },
-}
+};
 
 // ─── HELPER FUNCTIONS ───────────────────────────────────────────────────────────
 function formatDate(dateStr: string) {
-  if (!dateStr) return ''
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString('en-IN', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  })
+  if (!dateStr) return "";
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 // ─── STATE COMPONENTS ───────────────────────────────────────────────────────────
@@ -71,9 +94,24 @@ function LoadingState() {
       className="text-center py-16"
     >
       <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center mx-auto mb-5">
-        <svg className="animate-spin w-6 h-6 text-sage-600" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+        <svg
+          className="animate-spin w-6 h-6 text-sage-600"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          />
         </svg>
       </div>
       <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
@@ -86,7 +124,7 @@ function LoadingState() {
         This will only take a second.
       </p>
     </motion.div>
-  )
+  );
 }
 
 function NotFoundState() {
@@ -129,7 +167,7 @@ function NotFoundState() {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function AlreadyCancelledState({ appointment }: { appointment: Appointment }) {
@@ -152,15 +190,15 @@ function AlreadyCancelledState({ appointment }: { appointment: Appointment }) {
       <p className="font-display italic text-lg text-sage-500 mb-6">
         This appointment has already been cancelled.
       </p>
-      
+
       <div className="bg-white border border-sage-100 rounded-xl p-5 text-left mb-8 max-w-md mx-auto">
         <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-4">
           Appointment Details
         </p>
         {[
-          { label: 'Name', value: appointment.name },
-          { label: 'Date', value: formatDate(appointment.date) },
-          { label: 'Slot', value: appointment.slot },
+          { label: "Name", value: appointment.name },
+          { label: "Date", value: formatDate(appointment.date) },
+          { label: "Slot", value: appointment.slot },
         ].map(({ label, value }) => (
           <div
             key={label}
@@ -193,21 +231,21 @@ function AlreadyCancelledState({ appointment }: { appointment: Appointment }) {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
-function ReadyState({ 
-  appointment, 
-  selectedReason, 
-  setSelectedReason, 
-  onConfirm, 
-  onKeep 
-}: { 
-  appointment: Appointment
-  selectedReason: string
-  setSelectedReason: (reason: string) => void
-  onConfirm: () => void
-  onKeep: () => void
+function ReadyState({
+  appointment,
+  selectedReason,
+  setSelectedReason,
+  onConfirm,
+  onKeep,
+}: {
+  appointment: Appointment;
+  selectedReason: string;
+  setSelectedReason: (reason: string) => void;
+  onConfirm: () => void;
+  onKeep: () => void;
 }) {
   return (
     <motion.div
@@ -233,13 +271,16 @@ function ReadyState({
           Appointment Details
         </p>
         {[
-          { label: 'Name', value: appointment.name },
-          { label: 'Phone', value: appointment.phone },
-          { label: 'Age', value: `${appointment.age} years` },
-          { label: 'Date', value: formatDate(appointment.date) },
-          { label: 'Day Preference', value: appointment.day_preference || 'Any' },
-          { label: 'Slot', value: appointment.slot },
-          { label: 'Reason', value: appointment.reason || 'Not specified' },
+          { label: "Name", value: appointment.name },
+          { label: "Phone", value: appointment.phone },
+          { label: "Age", value: `${appointment.age} years` },
+          { label: "Date", value: formatDate(appointment.date) },
+          {
+            label: "Day Preference",
+            value: appointment.dayPreference || "Any",
+          },
+          { label: "Slot", value: appointment.slot },
+          { label: "Reason", value: appointment.reason || "Not specified" },
         ].map(({ label, value }) => (
           <div
             key={label}
@@ -289,7 +330,7 @@ function ReadyState({
         </button>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function DoneState({ appointment }: { appointment: Appointment }) {
@@ -318,9 +359,9 @@ function DoneState({ appointment }: { appointment: Appointment }) {
           Cancelled Appointment
         </p>
         {[
-          { label: 'Name', value: appointment.name },
-          { label: 'Date', value: formatDate(appointment.date) },
-          { label: 'Slot', value: appointment.slot },
+          { label: "Name", value: appointment.name },
+          { label: "Date", value: formatDate(appointment.date) },
+          { label: "Slot", value: appointment.slot },
         ].map(({ label, value }) => (
           <div
             key={label}
@@ -337,7 +378,7 @@ function DoneState({ appointment }: { appointment: Appointment }) {
       </div>
 
       <p className="text-sm text-sage-600 mb-8">
-        A confirmation has been sent to&apos;{' '}
+        A confirmation has been sent to&apos;{" "}
         <span className="font-medium text-sage-700">{appointment.phone}</span>
       </p>
 
@@ -358,7 +399,7 @@ function DoneState({ appointment }: { appointment: Appointment }) {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function ErrorState({ onRetry }: { onRetry: () => void }) {
@@ -407,70 +448,72 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 // ════════════════════════════════════════════════════════════════════════════
 export default function CancelPage() {
-  const searchParams = useSearchParams()
-  const [state, setState] = useState<PageState>('loading')
-  const [appointment, setAppointment] = useState<Appointment | null>(null)
-  const [selectedReason, setSelectedReason] = useState('')
-  const [error, setError] = useState('')
+  const searchParams = useSearchParams();
+  const [state, setState] = useState<PageState>("loading");
+  const [appointment, setAppointment] = useState<Appointment | null>(null);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [error, setError] = useState("");
 
-  const token = searchParams.get('token')
+  const token = searchParams.get("token");
+  const cancelAppointment = useMutation(
+    api.appointments.publicCancelAppointment,
+  );
 
   // ─── LOAD APPOINTMENT ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!token) {
-      setState('not_found')
-      return
+      setState("not_found");
+      return;
     }
 
     async function loadAppointment() {
       try {
-        const { data, error } = await supabase
-          .from('appointments')
-          .select('*')
-          .eq('cancel_token', token)
-          .single()
+        const data = await convex.query(
+          api.appointments.publicGetAppointmentByCancelToken,
+          {
+            cancelToken: token!,
+          },
+        );
 
-        if (error || !data) {
-          setState('not_found')
-          return
+        if (!data) {
+          setState("not_found");
+          return;
         }
 
-        setAppointment(data)
+        setAppointment(data);
 
-        if (data.status === 'cancelled') {
-          setState('already_cancelled')
+        if (data.status === "cancelled") {
+          setState("already_cancelled");
         } else {
-          setState('ready')
+          setState("ready");
         }
       } catch (err) {
-        console.error('Error loading appointment:', err)
-        setState('error')
+        console.error("Error loading appointment:", err);
+        setState("error");
       }
     }
 
-    loadAppointment()
-  }, [token])
+    loadAppointment();
+  }, [token]);
 
   // ─── CONFIRM CANCELLATION ────────────────────────────────────────────────────
   async function handleConfirm() {
-    if (!appointment || !selectedReason) return
+    if (!appointment || !selectedReason) return;
 
-    setState('confirming')
-    setError('')
+    setState("confirming");
+    setError("");
 
     try {
       // Update appointment status
-      const { error: updateError } = await supabase
-        .from('appointments')
-        .update({ status: 'cancelled' })
-        .eq('id', appointment.id)
-
-      if (updateError) throw new Error(updateError.message)
+      await cancelAppointment({
+        cancelToken: appointment.cancelToken,
+        cancelReason: selectedReason,
+      });
 
       // Send cancellation email
       await emailjs.send(
@@ -482,46 +525,46 @@ export default function CancelPage() {
           age: appointment.age,
           date: formatDate(appointment.date),
           slot: appointment.slot,
-          day_preference: appointment.day_preference || 'Any',
+          day_preference: appointment.dayPreference || "Any",
           reason: `CANCELLATION: ${selectedReason}`,
-          cancel_link: 'N/A',
+          cancel_link: "N/A",
         },
         EMAILJS_PUBLIC_KEY,
-      )
+      );
 
-      setState('done')
+      setState("done");
     } catch (err) {
-      console.error('Cancellation error:', err)
-      setError('Failed to cancel appointment. Please try again.')
-      setState('error')
+      console.error("Cancellation error:", err);
+      setError("Failed to cancel appointment. Please try again.");
+      setState("error");
     }
   }
 
   function handleRetry() {
-    setState('loading')
-    setSelectedReason('')
-    setError('')
+    setState("loading");
+    setSelectedReason("");
+    setError("");
     // Reload the page
-    window.location.reload()
+    window.location.reload();
   }
 
   function handleKeep() {
     // Navigate back to home
-    window.location.href = '/'
+    window.location.href = "/";
   }
 
   // ─── RENDER STATE ───────────────────────────────────────────────────────────
   const renderState = () => {
     switch (state) {
-      case 'loading':
-        return <LoadingState />
-      case 'confirming':
-        return <LoadingState />
-      case 'not_found':
-        return <NotFoundState />
-      case 'already_cancelled':
-        return <AlreadyCancelledState appointment={appointment!} />
-      case 'ready':
+      case "loading":
+        return <LoadingState />;
+      case "confirming":
+        return <LoadingState />;
+      case "not_found":
+        return <NotFoundState />;
+      case "already_cancelled":
+        return <AlreadyCancelledState appointment={appointment!} />;
+      case "ready":
         return (
           <ReadyState
             appointment={appointment!}
@@ -530,15 +573,15 @@ export default function CancelPage() {
             onConfirm={handleConfirm}
             onKeep={handleKeep}
           />
-        )
-      case 'done':
-        return <DoneState appointment={appointment!} />
-      case 'error':
-        return <ErrorState onRetry={handleRetry} />
+        );
+      case "done":
+        return <DoneState appointment={appointment!} />;
+      case "error":
+        return <ErrorState onRetry={handleRetry} />;
       default:
-        return <NotFoundState />
+        return <NotFoundState />;
     }
-  }
+  };
 
   return (
     <main className="min-h-screen bg-[#faf7f2]">
@@ -554,7 +597,9 @@ export default function CancelPage() {
           Ashabi Clinic · Sangli
         </p>
         <h1 className="font-display text-5xl md:text-6xl text-sage-800 leading-tight mb-2">
-          Cancel<br />Appointment
+          Cancel
+          <br />
+          Appointment
         </h1>
         <p className="font-display italic text-2xl text-sage-500">
           Manage your booking.
@@ -563,13 +608,11 @@ export default function CancelPage() {
 
       {/* ─── CONTENT ─── */}
       <section className="max-w-5xl mx-auto px-6 pb-16">
-        <div className="max-w-xl mx-auto">
-          {renderState()}
-        </div>
+        <div className="max-w-xl mx-auto">{renderState()}</div>
       </section>
 
       {/* ─── FOOTER ─── */}
       <Footer />
     </main>
-  )
+  );
 }

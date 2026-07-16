@@ -1,6 +1,6 @@
 
 
-import { mutation } from "./_generated/server";
+import { mutation,query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const publicCreateAppointment = mutation({
@@ -45,6 +45,64 @@ export const publicCreateAppointment = mutation({
     return {
       appointmentId:id,
       cancelToken,
+    };
+  },
+});
+
+
+export const publicGetAppointmentByCancelToken = query({
+  args: {
+    cancelToken: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const appointment = await ctx.db
+      .query("appointments")
+      .withIndex("by_cancel_token", (q) =>
+        q.eq("cancelToken", args.cancelToken)
+      )
+      .unique();
+
+    return appointment;
+  },
+});
+
+export const publicCancelAppointment = mutation({
+  args: {
+    cancelToken: v.string(),
+    cancelReason: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    const appointment = await ctx.db
+      .query("appointments")
+      .withIndex("by_cancel_token", (q) =>
+        q.eq("cancelToken", args.cancelToken)
+      )
+      .unique();
+      
+
+    if (!appointment) {
+      throw new Error("Appointment not found");
+    }
+
+    if (appointment.status === "cancelled") {
+  return {
+    success: true,
+    alreadyCancelled: true,
+  };
+}
+
+    await ctx.db.patch(appointment._id, {
+      status: "cancelled",
+      cancelReason: args.cancelReason,
+      cancelledAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+
+    return {
+      success: true,
+      alreadyCancelled:false
     };
   },
 });
