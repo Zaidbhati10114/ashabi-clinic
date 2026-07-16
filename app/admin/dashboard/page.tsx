@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, Variants } from "framer-motion";
-import { supabase } from "@/lib/supabase/supabase";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -262,40 +261,22 @@ export default function AdminDashboard() {
   const [filteredAppointments, setFilteredAppointments] = useState<
     Appointment[]
   >([]);
-  const [loading, setLoading] = useState(true);
+
   const [activeFilter, setActiveFilter] = useState<FilterStatus>("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
-  const appointments = useQuery(api.appointments.adminListAppointments) ?? [];
+  const appointments = useQuery(api.appointments.adminListAppointments);
+  const appointmentList = appointments ?? [];
   const updateAppointmentStatus = useMutation(
     api.appointments.adminUpdateAppointmentStatus,
   );
 
   // ─── AUTHENTICATION CHECK ───────────────────────────────────────────────────
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        if (!session) {
-          router.push("/admin/login");
-          return;
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-        router.push("/admin/login");
-      }
-    }
-
-    checkAuth();
-  }, [router]);
 
   // ─── FILTERING ───────────────────────────────────────────────────────────────
   useEffect(() => {
-    let filtered = appointments;
+    let filtered = appointmentList;
 
     // Status filter
     if (activeFilter !== "all") {
@@ -311,7 +292,7 @@ export default function AdminDashboard() {
     }
 
     setFilteredAppointments(filtered);
-  }, [appointments, activeFilter, fromDate, toDate]);
+  }, [appointmentList, activeFilter, fromDate, toDate]);
 
   // ─── ACTIONS ────────────────────────────────────────────────────────────────
   async function handleConfirm(id: Appointment["_id"]) {
@@ -335,10 +316,12 @@ export default function AdminDashboard() {
       console.error("Error cancelling appointment:", error);
     }
   }
-
   async function handleLogout() {
     try {
-      await supabase.auth.signOut();
+      await fetch("/api/admin/logout", {
+        method: "POST",
+      });
+
       router.push("/admin/login");
     } catch (error) {
       console.error("Logout error:", error);
@@ -347,14 +330,16 @@ export default function AdminDashboard() {
 
   // ─── STATS CALCULATION ───────────────────────────────────────────────────────
   const stats = {
-    total: appointments.length,
-    pending: appointments.filter((apt) => apt.status === "pending").length,
-    confirmed: appointments.filter((apt) => apt.status === "confirmed").length,
-    cancelled: appointments.filter((apt) => apt.status === "cancelled").length,
+    total: appointmentList.length,
+    pending: appointmentList.filter((apt) => apt.status === "pending").length,
+    confirmed: appointmentList.filter((apt) => apt.status === "confirmed")
+      .length,
+    cancelled: appointmentList.filter((apt) => apt.status === "cancelled")
+      .length,
   };
 
   // ─── LOADING STATE ───────────────────────────────────────────────────────────
-  if (loading) {
+  if (appointments === undefined) {
     return (
       <main className="min-h-screen bg-[#faf7f2]">
         <div className="text-center py-32">

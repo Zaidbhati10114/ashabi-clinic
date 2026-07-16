@@ -1,9 +1,13 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { motion, Variants } from 'framer-motion'
-import { supabase } from '@/lib/supabase/supabase'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion, Variants } from "framer-motion";
+
+type LoginResponse = {
+  success: boolean;
+  message: string;
+};
 
 // ─── ANIMATION VARIANTS ────────────────────────────────────────────────────────
 const fadeUp: Variants = {
@@ -16,7 +20,7 @@ const fadeUp: Variants = {
       ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   },
-}
+};
 
 // ─── INPUT COMPONENT ───────────────────────────────────────────────────────────
 function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
@@ -24,10 +28,10 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={`w-full border border-sage-200 rounded-xl px-4 py-3 text-sm text-sage-800 bg-white placeholder:text-sage-300 focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all ${
-        props.className ?? ''
+        props.className ?? ""
       }`}
     />
-  )
+  );
 }
 
 // ─── FIELD COMPONENT ───────────────────────────────────────────────────────────
@@ -36,9 +40,9 @@ function Field({
   error,
   children,
 }: {
-  label: string
-  error?: string
-  children: React.ReactNode
+  label: string;
+  error?: string;
+  children: React.ReactNode;
 }) {
   return (
     <div className="flex flex-col gap-1.5">
@@ -48,40 +52,46 @@ function Field({
       {children}
       {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
-  )
+  );
 }
 
 export default function AdminLogin() {
-  const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
 
-      if (signInError) {
-        setError('Invalid email or password')
-        return
+      const result: LoginResponse = await response.json();
+
+      if (!response.ok) {
+        setError(result.message);
+        return;
       }
 
-      if (data.session) {
-        router.push('/admin/dashboard')
-      }
+      router.push("/admin/dashboard");
     } catch (err) {
-      console.error('Login error:', err)
-      setError('Something went wrong. Please try again.')
+      console.error("Login error:", err);
+      setError("Something went wrong. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -120,18 +130,24 @@ export default function AdminLogin() {
               </p>
             </div>
 
-            <Field label="Email Address" error={error && !email ? 'Email is required' : ''}>
+            <Field
+              label="Username"
+              error={error && !username ? "Username is required" : ""}
+            >
               <Input
-                type="email"
-                placeholder="admin@ashabiclinic.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="admin"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={loading}
               />
             </Field>
 
-            <Field label="Password" error={error && !password ? 'Password is required' : ''}>
+            <Field
+              label="Password"
+              error={error && !password ? "Password is required" : ""}
+            >
               <Input
                 type="password"
                 placeholder="Enter your password"
@@ -152,19 +168,34 @@ export default function AdminLogin() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || !email || !password}
+              disabled={loading || !username || !password}
               className="w-full inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  <svg
+                    className="animate-spin w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
+                    />
                   </svg>
                   Signing In...
                 </>
               ) : (
-                'Sign In →'
+                "Sign In →"
               )}
             </button>
           </form>
@@ -181,5 +212,5 @@ export default function AdminLogin() {
         </div>
       </motion.div>
     </main>
-  )
+  );
 }

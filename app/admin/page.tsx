@@ -1,34 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase/supabase";
-
 export default function AdminRedirect() {
-  const router = useRouter();
-
-  // useEffect(() => {
-  //   async function checkSession() {
-  //     try {
-  //       const {
-  //         data: { session },
-  //       } = await supabase.auth.getSession();
-
-  //       if (session) {
-  //         router.push("/admin/dashboard");
-  //       } else {
-  //         router.push("/admin/dashboard");
-  //       }
-  //     } catch (error) {
-  //       console.error("Session check error:", error);
-  //       router.push("/admin/dashboard");
-  //     }
-  //   }
-
-  //   checkSession();
-  // }, [router]);
-
-  // Loading state while checking session
   return (
     <main className="min-h-screen bg-[#faf7f2] flex items-center justify-center">
       <div className="text-center">
