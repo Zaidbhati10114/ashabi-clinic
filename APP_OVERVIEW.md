@@ -74,3 +74,36 @@ This app uses the Next.js App Router, so each `app/[folder]/page.tsx` file becom
 - Supabase authenticates admin users and stores appointment records.
 - Appointment booking uses Supabase inserts plus EmailJS to send booking emails.
 - The cancel page looks up appointments by a cancellation token.
+
+## Supabase Schema
+
+### `appointments` table
+
+Stores all patient appointment bookings.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | `uuid` | Primary key (auto-generated) |
+| `name` | `text` | Patient's full name |
+| `phone` | `text` | Patient's 10-digit phone number |
+| `age` | `text` | Patient's age |
+| `date` | `date` | Appointment date (YYYY-MM-DD) |
+| `day_preference` | `text` | Day preference (Mon–Sun or "Any") |
+| `slot` | `text` | Time slot ("Morning (9:00 AM – 12:00 PM)" or "Evening (5:00 PM – 8:00 PM)") |
+| `reason` | `text` | Reason for appointment or "Not specified" |
+| `status` | `text` | One of: `pending`, `confirmed`, `cancelled` |
+| `cancel_token` | `uuid` | Unique token for safe appointment cancellation link |
+| `created_at` | `timestamp` | When the appointment was created (auto-set) |
+
+### `auth.users` table
+
+Managed by Supabase Auth. Stores admin login credentials.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | `uuid` | User ID (primary key) |
+| `email` | `text` | Admin email address |
+| `encrypted_password` | `text` | Hashed password |
+| `created_at` | `timestamp` | Account creation time |
+
+**Row Level Security (RLS)**: Admin dashboard queries require active Supabase session to fetch appointments.
