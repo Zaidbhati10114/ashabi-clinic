@@ -6,6 +6,7 @@ import emailjs from "@emailjs/browser";
 
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { DayPreference } from "@/types/appointment-types";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
@@ -27,8 +28,8 @@ type FormData = {
   phone: string;
   age: string;
   date: string;
-  dayPreference: string;
-  slot: string;
+  dayPreference: DayPreference | "";
+  slot: "morning" | "evening" | "";
   reason: string;
 };
 
@@ -158,10 +159,11 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
 
 // ════════════════════════════════════════════════════════════════════════════
 function BookingForm() {
+  type FormErrors = Partial<Record<keyof FormData, string>>;
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
   const [data, setData] = useState<FormData>(initial);
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<Partial<FormErrors>>({});
   const [loading, setLoading] = useState(false); // ← NEW
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState(""); // ← NEW
@@ -176,7 +178,7 @@ function BookingForm() {
   };
 
   function validate() {
-    const e: Partial<FormData> = {};
+    const e: Partial<FormErrors> = {};
     if (step === 0) {
       if (!data.name.trim()) e.name = "Name is required";
       if (!data.phone.trim() || !/^\d{10}$/.test(data.phone.trim()))

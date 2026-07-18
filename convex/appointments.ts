@@ -2,6 +2,8 @@
 
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { APPOINTMENT_STATUS } from '../types/appointment-types';
+
 
 export const publicCreateAppointment = mutation({
   args: {
@@ -10,7 +12,16 @@ export const publicCreateAppointment = mutation({
     age: v.number(),
 
     date: v.string(),
-    dayPreference: v.string(),
+    dayPreference: v.union(
+      v.literal("Any"),
+      v.literal("Mon"),
+      v.literal("Tue"),
+      v.literal("Wed"),
+      v.literal("Thu"),
+      v.literal("Fri"),
+      v.literal("Sat"),
+      v.literal("Sun")
+    ),
     slot: v.union(
       v.literal("morning"),
       v.literal("evening")
@@ -29,7 +40,7 @@ export const publicCreateAppointment = mutation({
       age: args.age,
 
       date: args.date,
-      dayPreference: args.dayPreference || "Any",
+      dayPreference: args.dayPreference,
       slot: args.slot,
 
       reason: args.reason.trim() || "Not specified",
@@ -86,7 +97,7 @@ export const publicCancelAppointment = mutation({
       throw new Error("Appointment not found");
     }
 
-    if (appointment.status === "cancelled") {
+    if (appointment.status === APPOINTMENT_STATUS.CANCELLED) {
       return {
         success: true,
         alreadyCancelled: true,
@@ -94,7 +105,7 @@ export const publicCancelAppointment = mutation({
     }
 
     await ctx.db.patch(appointment._id, {
-      status: "cancelled",
+      status: APPOINTMENT_STATUS.CANCELLED,
       cancelReason: args.cancelReason,
       cancelledAt: Date.now(),
       updatedAt: Date.now(),

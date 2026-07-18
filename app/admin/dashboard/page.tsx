@@ -1,35 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Appointment } from "@/types/appointment";
 import { Id } from "@/convex/_generated/dataModel";
-// ─── TYPES ───────────────────────────────────────────────────────────────────
-type Appointment = {
-  _id: Id<"appointments">;
-
-  name: string;
-  phone: string;
-  age: number;
-
-  date: string;
-  dayPreference: string;
-
-  slot: string;
-  reason: string;
-
-  status: "pending" | "confirmed" | "completed" | "cancelled";
-
-  cancelToken: string;
-
-  createdAt: number;
-  updatedAt: number;
-
-  cancelReason?: string;
-  cancelledAt?: number;
-};
+import { APPOINTMENT_STATUS } from "@/types/appointment-types";
 
 type FilterStatus = "all" | "pending" | "confirmed" | "cancelled";
 
@@ -234,7 +212,7 @@ function AppointmentCard({
         )}
       </div>
 
-      {appointment.status === "pending" && (
+      {appointment.status === APPOINTMENT_STATUS.PENDING && (
         <div className="flex gap-2">
           <button
             onClick={() => onConfirm(appointment._id)}
@@ -258,10 +236,6 @@ function AppointmentCard({
 export default function AdminDashboard() {
   const router = useRouter();
 
-  const [filteredAppointments, setFilteredAppointments] = useState<
-    Appointment[]
-  >([]);
-
   const [activeFilter, setActiveFilter] = useState<FilterStatus>("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -272,10 +246,7 @@ export default function AdminDashboard() {
     api.appointments.adminUpdateAppointmentStatus,
   );
 
-  // ─── AUTHENTICATION CHECK ───────────────────────────────────────────────────
-
-  // ─── FILTERING ───────────────────────────────────────────────────────────────
-  useEffect(() => {
+  const filteredAppointments = useMemo(() => {
     let filtered = appointmentList;
 
     // Status filter
@@ -291,7 +262,7 @@ export default function AdminDashboard() {
       filtered = filtered.filter((apt) => apt.date <= toDate);
     }
 
-    setFilteredAppointments(filtered);
+    return filtered;
   }, [appointmentList, activeFilter, fromDate, toDate]);
 
   // ─── ACTIONS ────────────────────────────────────────────────────────────────
@@ -331,11 +302,15 @@ export default function AdminDashboard() {
   // ─── STATS CALCULATION ───────────────────────────────────────────────────────
   const stats = {
     total: appointmentList.length,
-    pending: appointmentList.filter((apt) => apt.status === "pending").length,
-    confirmed: appointmentList.filter((apt) => apt.status === "confirmed")
-      .length,
-    cancelled: appointmentList.filter((apt) => apt.status === "cancelled")
-      .length,
+    pending: appointmentList.filter(
+      (apt) => apt.status === APPOINTMENT_STATUS.PENDING,
+    ).length,
+    confirmed: appointmentList.filter(
+      (apt) => apt.status === APPOINTMENT_STATUS.CONFIRMED,
+    ).length,
+    cancelled: appointmentList.filter(
+      (apt) => apt.status === APPOINTMENT_STATUS.CANCELLED,
+    ).length,
   };
 
   // ─── LOADING STATE ───────────────────────────────────────────────────────────

@@ -10,6 +10,7 @@ import { api } from "@/convex/_generated/api";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import DoctorInfoStrip from "../components/DoctorInfoStrip";
+import { APPOINTMENT_STATUS } from "@/types/appointment-types";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
@@ -487,7 +488,7 @@ export default function CancelPage() {
 
         setAppointment(data);
 
-        if (data.status === "cancelled") {
+        if (data.status === APPOINTMENT_STATUS.CANCELLED) {
           setState("already_cancelled");
         } else {
           setState("ready");

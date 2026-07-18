@@ -8,17 +8,29 @@ export default defineSchema({
     age: v.number(),
 
     date: v.string(),
-    dayPreference: v.string(),
-    slot: v.string(),
+    dayPreference: v.union(
+      v.literal("Any"),
+      v.literal("Mon"),
+      v.literal("Tue"),
+      v.literal("Wed"),
+      v.literal("Thu"),
+      v.literal("Fri"),
+      v.literal("Sat"),
+      v.literal("Sun")
+    ),
+    slot: v.union(
+      v.literal("morning"),
+      v.literal("evening")
+    ),
 
     reason: v.string(),
 
-  status: v.union(
-  v.literal("pending"),
-  v.literal("confirmed"),
-  v.literal("completed"),
-  v.literal("cancelled")
-),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("confirmed"),
+      v.literal("completed"),
+      v.literal("cancelled")
+    ),
 
     cancelToken: v.string(),
 

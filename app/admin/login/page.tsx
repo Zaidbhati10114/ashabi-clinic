@@ -4,10 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 
-type LoginResponse = {
-  success: boolean;
-  message: string;
-};
+import { ApiResponse } from "@/types/api";
 
 // ─── ANIMATION VARIANTS ────────────────────────────────────────────────────────
 const fadeUp: Variants = {
@@ -79,7 +76,7 @@ export default function AdminLogin() {
         }),
       });
 
-      const result: LoginResponse = await response.json();
+      const result: ApiResponse = await response.json();
 
       if (!response.ok) {
         setError(result.message);
