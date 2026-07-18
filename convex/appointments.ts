@@ -10,7 +10,7 @@ export const publicCreateAppointment = mutation({
     name: v.string(),
     phone: v.string(),
     age: v.number(),
-
+    email: v.string(),
     date: v.string(),
     dayPreference: v.union(
       v.literal("Any"),
@@ -38,7 +38,7 @@ export const publicCreateAppointment = mutation({
       name: args.name.trim(),
       phone: args.phone.trim(),
       age: args.age,
-
+      email: args.email.trim().toLowerCase(),
       date: args.date,
       dayPreference: args.dayPreference,
       slot: args.slot,
@@ -92,16 +92,12 @@ export const publicCancelAppointment = mutation({
       )
       .unique();
 
-
     if (!appointment) {
       throw new Error("Appointment not found");
     }
 
     if (appointment.status === APPOINTMENT_STATUS.CANCELLED) {
-      return {
-        success: true,
-        alreadyCancelled: true,
-      };
+      return appointment;
     }
 
     await ctx.db.patch(appointment._id, {
@@ -111,10 +107,13 @@ export const publicCancelAppointment = mutation({
       updatedAt: Date.now(),
     });
 
-    return {
-      success: true,
-      alreadyCancelled: false
-    };
+    const updatedAppointment = await ctx.db.get(appointment._id);
+
+    if (!updatedAppointment) {
+      throw new Error("Appointment not found after update.");
+    }
+
+    return updatedAppointment;
   },
 });
 

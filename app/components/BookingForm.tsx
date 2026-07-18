@@ -2,16 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
-import emailjs from "@emailjs/browser";
 
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { DayPreference } from "@/types/appointment-types";
 
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!;
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
 // ─────────────────────────────────────────────────────────────────────────────
 
 const SLOTS = [
@@ -26,6 +19,7 @@ const STEPS = ["Personal Info", "Schedule", "Reason", "Review"];
 type FormData = {
   name: string;
   phone: string;
+  email: string;
   age: string;
   date: string;
   dayPreference: DayPreference | "";
@@ -41,6 +35,7 @@ const initial: FormData = {
   dayPreference: "",
   slot: "",
   reason: "",
+  email: "",
 };
 
 // Matches landing page fadeUp exactly
@@ -168,10 +163,6 @@ function BookingForm() {
   const [submitted, setSubmitted] = useState(false);
   const [sendError, setSendError] = useState(""); // ← NEW
 
-  const createAppointment = useMutation(
-    api.appointments.publicCreateAppointment,
-  );
-
   const set = (field: keyof FormData, value: string) => {
     setData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -183,6 +174,11 @@ function BookingForm() {
       if (!data.name.trim()) e.name = "Name is required";
       if (!data.phone.trim() || !/^\d{10}$/.test(data.phone.trim()))
         e.phone = "Enter a valid 10-digit phone number";
+      if (!data.email.trim()) {
+        e.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
+        e.email = "Enter a valid email address";
+      }
       if (!data.age.trim() || isNaN(Number(data.age)) || Number(data.age) < 1)
         e.age = "Enter a valid age";
     }
@@ -209,45 +205,38 @@ function BookingForm() {
     setLoading(true);
     setSendError("");
 
-    const slot = SLOTS.find((s) => s.id === data.slot);
-
     try {
-      const result = await createAppointment({
-        name: data.name,
-        phone: data.phone,
-        age: Number(data.age),
-
-        date: data.date,
-        dayPreference: data.dayPreference || "Any",
-
-        slot: data.slot as "morning" | "evening",
-
-        reason: data.reason || "Not specified",
-      });
-
-      const cancelLink = `${window.location.origin}/cancel?token=${result.cancelToken}`;
-
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
+      const response = await fetch("/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           name: data.name,
           phone: data.phone,
-          age: data.age,
-          date: formatDate(data.date),
-          slot: slot ? `${slot.label} (${slot.time})` : "",
-          day_preference: data.dayPreference || "Any",
+          email: data.email,
+          age: Number(data.age),
+          date: data.date,
+          dayPreference: data.dayPreference || "Any",
+          slot: data.slot,
           reason: data.reason || "Not specified",
-          cancel_link: cancelLink, // ← ADD
-        },
-        EMAILJS_PUBLIC_KEY,
-      );
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
 
       setSubmitted(true);
     } catch (err) {
-      console.error("Booking error:", err);
+      console.error(err);
+
       setSendError(
-        "Something went wrong. Please try again or call us directly.",
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -319,7 +308,7 @@ function BookingForm() {
           We&apos;ll be in touch shortly.
         </p>
         <p className="text-sm text-sage-500 mb-8">
-          Confirmation will be sent to{" "}
+          Confirmation will be sent to {data.email}
           <span className="font-medium text-sage-700">{data.phone}</span>
         </p>
 
@@ -384,6 +373,14 @@ function BookingForm() {
           placeholder="e.g. Fatima Shaikh"
           value={data.name}
           onChange={(e) => set("name", e.target.value)}
+        />
+      </Field>
+      <Field label="Email" error={errors.email}>
+        <Input
+          type="email"
+          placeholder="patient@gmail.com"
+          value={data.email}
+          onChange={(e) => set("email", e.target.value)}
         />
       </Field>
       <Field label="Phone Number" error={errors.phone}>
