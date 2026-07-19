@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, Variants } from "framer-motion";
-import emailjs from "@emailjs/browser";
+
 import { useMutation } from "convex/react";
 import { ConvexReactClient } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -11,11 +11,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import DoctorInfoStrip from "../components/DoctorInfoStrip";
 import { APPOINTMENT_STATUS } from "@/types/appointment-types";
-
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!;
-const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!;
-const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!;
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -41,7 +36,7 @@ type Appointment = {
   name: string;
   phone: string;
   age: number;
-
+  email: string;
   date: string;
   dayPreference: string;
 
@@ -511,27 +506,24 @@ export default function CancelPage() {
 
     try {
       // Update appointment status
-      await cancelAppointment({
-        cancelToken: appointment.cancelToken,
-        cancelReason: selectedReason,
+      const response = await fetch("/api/appointments/cancel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cancelToken: appointment.cancelToken,
+          cancelReason: selectedReason,
+        }),
       });
 
-      // Send cancellation email
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          name: appointment.name,
-          phone: appointment.phone,
-          age: appointment.age,
-          date: formatDate(appointment.date),
-          slot: appointment.slot,
-          day_preference: appointment.dayPreference || "Any",
-          reason: `CANCELLATION: ${selectedReason}`,
-          cancel_link: "N/A",
-        },
-        EMAILJS_PUBLIC_KEY,
-      );
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      setState("done");
 
       setState("done");
     } catch (err) {

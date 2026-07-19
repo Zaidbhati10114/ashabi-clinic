@@ -6,7 +6,7 @@ export default defineSchema({
     name: v.string(),
     phone: v.string(),
     age: v.number(),
-
+    email: v.string(),
     date: v.string(),
     dayPreference: v.union(
       v.literal("Any"),

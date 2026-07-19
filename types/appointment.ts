@@ -12,7 +12,7 @@ export interface Appointment {
     name: string;
     phone: string;
     age: number;
-
+    email: string;
     date: string;
     dayPreference: DayPreference;
     slot: Slot;
