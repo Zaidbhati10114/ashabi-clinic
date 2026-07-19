@@ -2,55 +2,54 @@ import { APP } from "@/lib/config/app";
 import { CLINIC } from "@/lib/config/clinic";
 
 import { badge } from "../components/badge";
-import { button } from "../components/button";
 import { card } from "../components/card";
 import { divider } from "../components/divider";
 import { heading } from "../components/heading";
 import { paragraph } from "../components/paragraph";
-import { spacer } from "../components/spacer";
+
 import {
     formatEmailDate,
     formatSlot,
 } from "../utils";
 
 import { emailLayout } from "./layout";
+import { button } from "../components/button";
 
-type AppointmentConfirmationTemplateProps = {
+type AppointmentCancellationTemplateProps = {
     patientName: string;
     date: string;
     slot: string;
     dayPreference: string;
-    cancelLink: string;
+    cancelReason: string;
 };
 
-export function appointmentConfirmationTemplate({
+export function appointmentCancellationTemplate({
     patientName,
     date,
     slot,
     dayPreference,
-    cancelLink,
-}: AppointmentConfirmationTemplateProps): string {
+    cancelReason,
+}: AppointmentCancellationTemplateProps) {
     return emailLayout({
-        title: "Appointment Confirmed",
+        title: "Appointment Cancelled",
 
-        preheader: "Your appointment has been confirmed successfully.",
+        preheader:
+            "Your appointment has been cancelled successfully.",
 
         content: `
       ${badge({
-            text: "Appointment Confirmed",
-            variant: "success",
+            text: "Appointment Cancelled",
+            variant: "danger",
         })}
 
       ${heading({
-            title: `Hello ${patientName}!`,
+            title: `Goodbye ${patientName}`,
             subtitle:
-                "We're pleased to confirm your appointment. Below are your appointment details.",
+                "Your appointment has been cancelled successfully.",
         })}
 
-      ${spacer()}
-
       ${card({
-            title: "Appointment Details",
+            title: "Cancelled Appointment",
             items: [
                 {
                     label: "🏥 Clinic",
@@ -72,17 +71,21 @@ export function appointmentConfirmationTemplate({
                     label: "🕒 Time Slot",
                     value: formatSlot(slot),
                 },
+                {
+                    label: "❌ Reason",
+                    value: cancelReason,
+                },
             ],
         })}
 
       ${paragraph({
             text:
-                "If your plans change, you can cancel your appointment anytime using the button below.",
+                "If this cancellation was made by mistake, you can always schedule another appointment through our website.",
         })}
 
       ${button({
-            text: "Cancel Appointment",
-            href: cancelLink,
+            text: "Book New Appointment",
+            href: `${APP.url}/book`,
         })}
 
       ${divider()}
@@ -90,19 +93,17 @@ export function appointmentConfirmationTemplate({
       ${paragraph({
             center: true,
             text: `
-Need help?
+Need assistance?
 
 📞 ${CLINIC.phone}
 
 ${CLINIC.email ? `✉️ ${CLINIC.email}<br><br>` : ""}
 
-You can also visit our website anytime.
-
 <a
 href="${APP.url}"
-style="color:#5F7D5A;font-weight:600;text-decoration:none;"
+style="color:#5F7D5A;text-decoration:none;font-weight:600;"
 >
-${APP.url}
+Visit Ashabi Clinic
 </a>
 `,
         })}

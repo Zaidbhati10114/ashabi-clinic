@@ -1,6 +1,10 @@
 import { CLINIC } from "@/lib/config/clinic";
 import { sendMail } from "./smtp";
 
+
+import { appointmentConfirmationTemplate } from "./templates/appointment-confirmation";
+import { appointmentCancellationTemplate } from "./templates/appointment-cancellation";
+
 type ConfirmationEmailProps = {
     patientName: string;
     patientEmail: string;
@@ -50,39 +54,13 @@ ${CLINIC.name}
 ${CLINIC.phone}
 `;
 
-    const html = `
-    <h2>Appointment Confirmed</h2>
-
-    <p>Dear <strong>${patientName}</strong>,</p>
-
-    <p>Your appointment has been successfully booked.</p>
-
-    <ul>
-      <li><strong>Clinic:</strong> ${CLINIC.name}</li>
-      <li><strong>Doctor:</strong> ${CLINIC.doctor}</li>
-      <li><strong>Date:</strong> ${date}</li>
-      <li><strong>Preferred Day:</strong> ${dayPreference}</li>
-      <li><strong>Slot:</strong> ${slot}</li>
-    </ul>
-
-    <p>
-      If you wish to cancel your appointment, click below:
-    </p>
-
-    <p>
-      <a href="${cancelLink}">
-        Cancel Appointment
-      </a>
-    </p>
-
-    <br/>
-
-    <p>
-      Regards,<br/>
-      <strong>${CLINIC.name}</strong><br/>
-      ${CLINIC.phone}
-    </p>
-  `;
+    const html = appointmentConfirmationTemplate({
+        patientName,
+        date,
+        slot,
+        dayPreference,
+        cancelLink,
+    })
 
     await sendMail({
         to: patientEmail,
@@ -124,34 +102,13 @@ ${CLINIC.name}
 ${CLINIC.phone}
 `;
 
-    const html = `
-    <h2>Appointment Cancelled</h2>
-
-    <p>Dear <strong>${patientName}</strong>,</p>
-
-    <p>Your appointment has been cancelled successfully.</p>
-
-    <ul>
-      <li><strong>Clinic:</strong> ${CLINIC.name}</li>
-      <li><strong>Doctor:</strong> ${CLINIC.doctor}</li>
-      <li><strong>Date:</strong> ${date}</li>
-      <li><strong>Preferred Day:</strong> ${dayPreference}</li>
-      <li><strong>Slot:</strong> ${slot}</li>
-      <li><strong>Cancellation Reason:</strong> ${cancelReason}</li>
-    </ul>
-
-    <p>
-      If this was a mistake, you can always book a new appointment.
-    </p>
-
-    <br/>
-
-    <p>
-      Regards,<br/>
-      <strong>${CLINIC.name}</strong><br/>
-      ${CLINIC.phone}
-    </p>
-  `;
+    const html = appointmentCancellationTemplate({
+        patientName,
+        date,
+        slot,
+        dayPreference,
+        cancelReason,
+    })
 
     await sendMail({
         to: patientEmail,
