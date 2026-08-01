@@ -1,5 +1,5 @@
 import { CLINIC } from "@/lib/config/clinic";
-import { sendMail } from "./smtp";
+import { sendMail } from "./mailer";
 
 
 import { appointmentConfirmationTemplate } from "./templates/appointment-confirmation";
