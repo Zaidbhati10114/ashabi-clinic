@@ -27,7 +27,7 @@ const stagger: Variants = {
 };
 function ClaudeResult() {
   return (
-    <main className="min-h-screen bg-[#faf7f2]">
+    <main className="min-h-screen bg-sky">
       {/* NAV */}
       <Header ctaType="phone" phoneNumber="8856819580" />
 
@@ -43,13 +43,13 @@ function ClaudeResult() {
           <div>
             <motion.p
               variants={fadeUp}
-              className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-4"
+              className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-4"
             >
               Homoeopathic Clinic · Est. 2008
             </motion.p>
             <motion.h1
               variants={fadeUp}
-              className="font-display text-5xl md:text-6xl text-sage-800 leading-tight mb-2"
+              className="font-display text-5xl md:text-6xl text-blue-800 leading-tight mb-2"
             >
               Ashabi
               <br />
@@ -57,13 +57,13 @@ function ClaudeResult() {
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              className="font-display italic text-2xl text-sage-500 mb-6"
+              className="font-display italic text-2xl text-blue-500 mb-6"
             >
               Gentle healing, trusted care.
             </motion.p>
             <motion.p
               variants={fadeUp}
-              className="text-sm text-sage-600 leading-relaxed mb-8 max-w-sm"
+              className="text-sm text-blue-600 leading-relaxed mb-8 max-w-sm"
             >
               A registered homoeopathic practice serving families in Sangli
               since 2008. Affordable, compassionate care — with medicines
@@ -75,13 +75,13 @@ function ClaudeResult() {
             >
               <a
                 href="/book"
-                className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
               >
                 Book Appointment
               </a>
               <a
                 href="#about"
-                className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+                className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
               >
                 Learn More
               </a>
@@ -95,9 +95,9 @@ function ClaudeResult() {
           >
             <div className="relative">
               {/* Decorative background shape */}
-              <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-2xl bg-sage-100" />
+              <div className="absolute inset-0 translate-x-3 translate-y-3 rounded-2xl bg-blue-100" />
               {/* Photo frame */}
-              <div className="relative w-48 h-56 rounded-2xl overflow-hidden border-2 border-sage-200 shadow-md bg-warm">
+              <div className="relative w-48 h-56 rounded-2xl overflow-hidden border-2 border-blue-200 shadow-md bg-mist">
                 <Image
                   src="/doctor.png"
                   alt="Dr. Sahirabanu Faruk Bhati"
@@ -107,8 +107,8 @@ function ClaudeResult() {
                 />
               </div>
               {/* Badge */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white border border-sage-200 rounded-full px-4 py-1.5 shadow-sm whitespace-nowrap">
-                <span className="text-xs font-medium text-sage-700">
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white border border-blue-200 rounded-full px-4 py-1.5 shadow-sm whitespace-nowrap">
+                <span className="text-xs font-medium text-blue-700">
                   Reg. No. 16878
                 </span>
               </div>
@@ -118,7 +118,7 @@ function ClaudeResult() {
       </section>
 
       {/* ─── DOCTOR INFO ─── */}
-      <section id="about" className="bg-[#f0f5f0] py-14">
+      <section id="about" className="bg-mist py-14">
         <div className="max-w-5xl mx-auto px-6">
           <motion.div
             variants={stagger}
@@ -128,19 +128,19 @@ function ClaudeResult() {
           >
             <motion.p
               variants={fadeUp}
-              className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2"
+              className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2"
             >
               About the Doctor
             </motion.p>
             <motion.h2
               variants={fadeUp}
-              className="font-display text-4xl text-sage-800 mb-1"
+              className="font-display text-4xl text-blue-800 mb-1"
             >
               Dr. Sahirabanu Faruk Bhati
             </motion.h2>
             <motion.p
               variants={fadeUp}
-              className="text-sm text-sage-500 italic mb-6"
+              className="text-sm text-blue-500 italic mb-6"
             >
               Registered as Dr. Saira Shikandar Mujawar · MCH Reg. No. 16878
             </motion.p>
@@ -156,12 +156,12 @@ function ClaudeResult() {
                 <motion.div
                   key={item.label}
                   variants={fadeUp}
-                  className="bg-white rounded-xl p-5 border border-sage-100"
+                  className="bg-white rounded-xl p-5 border border-blue-100"
                 >
-                  <p className="text-xs text-sage-400 uppercase tracking-widest mb-1">
+                  <p className="text-xs text-blue-600 uppercase tracking-widest mb-1">
                     {item.label}
                   </p>
-                  <p className="font-display text-xl text-sage-800">
+                  <p className="font-display text-xl text-blue-800">
                     {item.value}
                   </p>
                 </motion.div>
@@ -181,13 +181,13 @@ function ClaudeResult() {
         >
           <motion.p
             variants={fadeUp}
-            className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2"
+            className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2"
           >
             What We Offer
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="font-display text-4xl text-sage-800 mb-8"
+            className="font-display text-4xl text-blue-800 mb-8"
           >
             Our Services
           </motion.h2>
@@ -230,13 +230,13 @@ function ClaudeResult() {
               <motion.div
                 key={s.title}
                 variants={fadeUp}
-                className="bg-white border border-sage-100 rounded-xl p-5 hover:shadow-md hover:border-sage-300 transition-all"
+                className="bg-white border border-blue-100 rounded-xl p-5 hover:shadow-md hover:border-blue-300 transition-all"
               >
                 <span className="text-2xl mb-3 block">{s.icon}</span>
-                <h3 className="font-medium text-sage-800 mb-1 text-sm">
+                <h3 className="font-medium text-blue-800 mb-1 text-sm">
                   {s.title}
                 </h3>
-                <p className="text-xs text-sage-500 leading-relaxed">
+                <p className="text-xs text-blue-500 leading-relaxed">
                   {s.desc}
                 </p>
               </motion.div>
@@ -246,7 +246,7 @@ function ClaudeResult() {
       </section>
 
       {/* ─── TIMINGS ─── */}
-      <section className="bg-sage-700 py-12">
+      <section className="bg-blue-700 py-12">
         <div className="max-w-5xl mx-auto px-6">
           <motion.div
             variants={stagger}
@@ -257,7 +257,7 @@ function ClaudeResult() {
           >
             <motion.p
               variants={fadeUp}
-              className="text-xs font-medium tracking-[0.2em] text-sage-200 uppercase mb-2"
+              className="text-xs font-medium tracking-[0.2em] text-blue-50 uppercase mb-2"
             >
               Visiting Hours
             </motion.p>
@@ -280,14 +280,14 @@ function ClaudeResult() {
                   variants={fadeUp}
                   className="bg-white/10 border border-white/20 rounded-xl px-8 py-4 text-center"
                 >
-                  <p className="text-sage-200 text-xs uppercase tracking-widest mb-1">
+                  <p className="text-blue-50 text-xs uppercase tracking-widest mb-1">
                     {t.slot}
                   </p>
                   <p className="font-display text-2xl text-white">{t.time}</p>
                 </motion.div>
               ))}
             </motion.div>
-            <motion.p variants={fadeUp} className="text-sage-300 text-xs mt-4">
+            <motion.p variants={fadeUp} className="text-blue-100 text-xs mt-4">
               Sunday: Morning only &nbsp;·&nbsp; Closed on major holidays
             </motion.p>
           </motion.div>
@@ -304,20 +304,20 @@ function ClaudeResult() {
         >
           <motion.p
             variants={fadeUp}
-            className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2"
+            className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2"
           >
             Where We Are
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="font-display text-4xl text-sage-800 mb-6"
+            className="font-display text-4xl text-blue-800 mb-6"
           >
             Find the Clinic
           </motion.h2>
 
           <motion.div
             variants={fadeUp}
-            className="rounded-2xl overflow-hidden border border-sage-100 shadow-sm"
+            className="rounded-2xl overflow-hidden border border-blue-100 shadow-sm"
           >
             {/* Map iframe */}
             <div className="relative w-full h-64 sm:h-80">
@@ -335,14 +335,14 @@ function ClaudeResult() {
             </div>
 
             {/* Bottom bar */}
-            <div className="bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-sage-100">
+            <div className="bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-blue-100">
               <div className="flex items-start gap-3">
                 <span className="text-lg mt-0.5">📍</span>
                 <div>
-                  <p className="text-sm font-medium text-sage-800">
+                  <p className="text-sm font-medium text-blue-800">
                     Ashabi Clinic
                   </p>
-                  <p className="text-xs text-sage-400">
+                  <p className="text-xs text-blue-600">
                     Hanuman Nagar, 1st Lane, Sangli – 416 416
                   </p>
                 </div>
@@ -351,7 +351,7 @@ function ClaudeResult() {
                 href="https://maps.app.goo.gl/P3aWojMz2JLYBbn87"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-sage-700 transition-colors whitespace-nowrap shrink-0"
+                className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors whitespace-nowrap shrink-0"
               >
                 Get Directions →
               </a>
@@ -370,13 +370,13 @@ function ClaudeResult() {
         >
           <motion.p
             variants={fadeUp}
-            className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2"
+            className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2"
           >
             Find Us
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="font-display text-4xl text-sage-800 mb-8"
+            className="font-display text-4xl text-blue-800 mb-8"
           >
             Contact & Location
           </motion.h2>
@@ -384,12 +384,12 @@ function ClaudeResult() {
             {/* Address Card */}
             <motion.div
               variants={fadeUp}
-              className="bg-white border border-sage-100 rounded-xl p-6"
+              className="bg-white border border-blue-100 rounded-xl p-6"
             >
-              <h3 className="font-medium text-sage-700 text-sm mb-3 uppercase tracking-wider">
+              <h3 className="font-medium text-blue-700 text-sm mb-3 uppercase tracking-wider">
                 Clinic Address
               </h3>
-              <p className="font-display text-xl text-sage-800 leading-snug">
+              <p className="font-display text-xl text-blue-800 leading-snug">
                 Ashabi Clinic
                 <br />
                 Hanuman Nagar, 1st Lane
@@ -398,28 +398,28 @@ function ClaudeResult() {
                 <br />
                 PIN – 416 416
               </p>
-              {/* <p className="text-xs text-sage-400 mt-3">
+              {/* <p className="text-xs text-blue-600 mt-3">
                 Near Mohite Hospital, 100 Ft Road, Gulab Colony
               </p> */}
             </motion.div>
             {/* Contact Card */}
             <motion.div
               variants={fadeUp}
-              className="bg-white border border-sage-100 rounded-xl p-6 flex flex-col gap-4"
+              className="bg-white border border-blue-100 rounded-xl p-6 flex flex-col gap-4"
             >
-              <h3 className="font-medium text-sage-700 text-sm uppercase tracking-wider">
+              <h3 className="font-medium text-blue-700 text-sm uppercase tracking-wider">
                 Get in Touch
               </h3>
               <a
                 href="tel:+919880919789"
                 className="flex items-center gap-3 group"
               >
-                <div className="w-9 h-9 rounded-full bg-sage-100 flex items-center justify-center text-sage-600 group-hover:bg-sage-200 transition-colors">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-200 transition-colors">
                   📞
                 </div>
                 <div>
-                  <p className="text-xs text-sage-400">Phone / WhatsApp</p>
-                  <p className="font-medium text-sage-800 text-sm">
+                  <p className="text-xs text-blue-600">Phone / WhatsApp</p>
+                  <p className="font-medium text-blue-800 text-sm">
                     8856819580
                   </p>
                 </div>
@@ -428,21 +428,21 @@ function ClaudeResult() {
                 href="tel:+915617895"
                 className="flex items-center gap-3 group"
               >
-                <div className="w-9 h-9 rounded-full bg-sage-100 flex items-center justify-center text-sage-600 group-hover:bg-sage-200 transition-colors">
+                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-200 transition-colors">
                   ☎️
                 </div>
                 <div>
-                  <p className="text-xs text-sage-400">Clinic Landline</p>
-                  <p className="font-medium text-sage-800 text-sm">9503148821</p>
+                  <p className="text-xs text-blue-600">Clinic Landline</p>
+                  <p className="font-medium text-blue-800 text-sm">9503148821</p>
                 </div>
               </a>
               <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-full bg-sage-100 flex items-center justify-center text-sage-600">
+                                <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
                   📍
                 </div>
                 <div>
-                  <p className="text-xs text-sage-400">MCH Registration</p>
-                  <p className="font-medium text-sage-800 text-sm">
+                  <p className="text-xs text-blue-600">MCH Registration</p>
+                  <p className="font-medium text-blue-800 text-sm">
                     Reg. No. 16878 · Maharashtra Council of Homoeopathy
                   </p>
                 </div>

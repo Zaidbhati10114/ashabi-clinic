@@ -89,9 +89,9 @@ function LoadingState() {
       animate="show"
       className="text-center py-16"
     >
-      <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center mx-auto mb-5">
+      <div className="w-14 h-14 bg-mist rounded-full flex items-center justify-center mx-auto mb-5">
         <svg
-          className="animate-spin w-6 h-6 text-sage-600"
+          className="animate-spin w-6 h-6 text-blue-600"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -110,13 +110,13 @@ function LoadingState() {
           />
         </svg>
       </div>
-      <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+      <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
         Please wait
       </p>
-      <h2 className="font-display text-3xl text-sage-800 mb-2">
+      <h2 className="font-display text-3xl text-blue-800 mb-2">
         Looking up your appointment…
       </h2>
-      <p className="font-display italic text-lg text-sage-400">
+      <p className="font-display italic text-lg text-blue-600">
         This will only take a second.
       </p>
     </motion.div>
@@ -134,29 +134,29 @@ function NotFoundState() {
       <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
         ❌
       </div>
-      <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+      <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
         Invalid Link
       </p>
-      <h2 className="font-display text-3xl text-sage-800 mb-2">
+      <h2 className="font-display text-3xl text-blue-800 mb-2">
         Appointment Not Found
       </h2>
-      <p className="font-display italic text-lg text-sage-500 mb-6">
+      <p className="font-display italic text-lg text-blue-500 mb-6">
         This cancellation link has expired or is invalid.
       </p>
-      <p className="text-sm text-sage-600 mb-8">
+      <p className="text-sm text-blue-600 mb-8">
         Please call us directly to cancel your appointment.
       </p>
       <div className="space-y-3">
         <a
           href="tel:+918856819580"
-          className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
         >
           📞 Call Us: 8856819580
         </a>
         <div>
           <a
             href="/"
-            className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
           >
             ← Back to Home
           </a>
@@ -174,21 +174,21 @@ function AlreadyCancelledState({ appointment }: { appointment: Appointment }) {
       animate="show"
       className="text-center py-16"
     >
-      <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
+      <div className="w-14 h-14 bg-mist rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
         ℹ️
       </div>
-      <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+      <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
         Already Cancelled
       </p>
-      <h2 className="font-display text-3xl text-sage-800 mb-2">
+      <h2 className="font-display text-3xl text-blue-800 mb-2">
         Appointment Was Cancelled
       </h2>
-      <p className="font-display italic text-lg text-sage-500 mb-6">
+      <p className="font-display italic text-lg text-blue-500 mb-6">
         This appointment has already been cancelled.
       </p>
 
-      <div className="bg-white border border-sage-100 rounded-xl p-5 text-left mb-8 max-w-md mx-auto">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-4">
+      <div className="bg-white border border-blue-100 rounded-xl p-5 text-left mb-8 max-w-md mx-auto">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-4">
           Appointment Details
         </p>
         {[
@@ -198,12 +198,12 @@ function AlreadyCancelledState({ appointment }: { appointment: Appointment }) {
         ].map(({ label, value }) => (
           <div
             key={label}
-            className="flex justify-between items-start py-2.5 border-b border-sage-100 last:border-0"
+            className="flex justify-between items-start py-2.5 border-b border-blue-100 last:border-0"
           >
-            <span className="text-xs text-sage-400 uppercase tracking-widest">
+            <span className="text-xs text-blue-600 uppercase tracking-widest">
               {label}
             </span>
-            <span className="font-display text-base text-sage-800 text-right">
+            <span className="font-display text-base text-blue-800 text-right">
               {value}
             </span>
           </div>
@@ -213,14 +213,14 @@ function AlreadyCancelledState({ appointment }: { appointment: Appointment }) {
       <div className="space-y-3">
         <a
           href="/book"
-          className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
         >
           Book New Appointment
         </a>
         <div>
           <a
             href="/"
-            className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
           >
             ← Back to Home
           </a>
@@ -251,19 +251,19 @@ function ReadyState({
       className="space-y-6"
     >
       <div className="text-center">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Confirm Cancellation
         </p>
-        <h2 className="font-display text-4xl text-sage-800 mb-2">
+        <h2 className="font-display text-4xl text-blue-800 mb-2">
           Cancel Appointment?
         </h2>
-        <p className="font-display italic text-2xl text-sage-500">
+        <p className="font-display italic text-2xl text-blue-500">
           Please review before confirming.
         </p>
       </div>
 
-      <div className="bg-white border border-sage-100 rounded-xl p-5">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-4">
+      <div className="bg-white border border-blue-100 rounded-xl p-5">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-4">
           Appointment Details
         </p>
         {[
@@ -280,26 +280,26 @@ function ReadyState({
         ].map(({ label, value }) => (
           <div
             key={label}
-            className="flex justify-between items-start py-2.5 border-b border-sage-100 last:border-0"
+            className="flex justify-between items-start py-2.5 border-b border-blue-100 last:border-0"
           >
-            <span className="text-xs text-sage-400 uppercase tracking-widest shrink-0">
+            <span className="text-xs text-blue-600 uppercase tracking-widest shrink-0">
               {label}
             </span>
-            <span className="font-display text-base text-sage-800 text-right ml-4">
+            <span className="font-display text-base text-blue-800 text-right ml-4">
               {value}
             </span>
           </div>
         ))}
       </div>
 
-      <div className="bg-white border border-sage-100 rounded-xl p-5">
-        <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 block mb-3">
+      <div className="bg-white border border-blue-100 rounded-xl p-5">
+        <label className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500 block mb-3">
           Reason for Cancellation
         </label>
         <select
           value={selectedReason}
           onChange={(e) => setSelectedReason(e.target.value)}
-          className="w-full border border-sage-200 rounded-xl px-4 py-3 text-sm text-sage-800 bg-white focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all"
+          className="w-full border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all"
         >
           <option value="">Please select a reason</option>
           {CANCEL_REASONS.map((reason) => (
@@ -313,7 +313,7 @@ function ReadyState({
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <button
           onClick={onKeep}
-          className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+          className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
         >
           Keep Appointment
         </button>
@@ -340,18 +340,18 @@ function DoneState({ appointment }: { appointment: Appointment }) {
       <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
         ✅
       </div>
-      <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+      <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
         Cancellation Complete
       </p>
-      <h2 className="font-display text-4xl text-sage-800 mb-2">
+      <h2 className="font-display text-4xl text-blue-800 mb-2">
         Appointment Cancelled
       </h2>
-      <p className="font-display italic text-2xl text-sage-500 mb-6">
+      <p className="font-display italic text-2xl text-blue-500 mb-6">
         We&apos;ve updated your booking.
       </p>
 
-      <div className="bg-white border border-sage-100 rounded-xl p-5 text-left mb-8 max-w-md mx-auto">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-4">
+      <div className="bg-white border border-blue-100 rounded-xl p-5 text-left mb-8 max-w-md mx-auto">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-4">
           Cancelled Appointment
         </p>
         {[
@@ -361,34 +361,34 @@ function DoneState({ appointment }: { appointment: Appointment }) {
         ].map(({ label, value }) => (
           <div
             key={label}
-            className="flex justify-between items-start py-2.5 border-b border-sage-100 last:border-0"
+            className="flex justify-between items-start py-2.5 border-b border-blue-100 last:border-0"
           >
-            <span className="text-xs text-sage-400 uppercase tracking-widest">
+            <span className="text-xs text-blue-600 uppercase tracking-widest">
               {label}
             </span>
-            <span className="font-display text-base text-sage-800 text-right">
+            <span className="font-display text-base text-blue-800 text-right">
               {value}
             </span>
           </div>
         ))}
       </div>
 
-      <p className="text-sm text-sage-600 mb-8">
+      <p className="text-sm text-blue-600 mb-8">
         A confirmation has been sent to&apos;{" "}
-        <span className="font-medium text-sage-700">{appointment.phone}</span>
+        <span className="font-medium text-blue-700">{appointment.phone}</span>
       </p>
 
       <div className="space-y-3">
         <a
           href="/book"
-          className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
         >
           Book New Appointment
         </a>
         <div>
           <a
             href="/"
-            className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
           >
             ← Back to Home
           </a>
@@ -409,35 +409,35 @@ function ErrorState({ onRetry }: { onRetry: () => void }) {
       <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
         ⚠️
       </div>
-      <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+      <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
         Something Went Wrong
       </p>
-      <h2 className="font-display text-3xl text-sage-800 mb-2">
+      <h2 className="font-display text-3xl text-blue-800 mb-2">
         Error Occurred
       </h2>
-      <p className="font-display italic text-lg text-sage-500 mb-6">
+      <p className="font-display italic text-lg text-blue-500 mb-6">
         We couldn&apos;t process your request.
       </p>
-      <p className="text-sm text-sage-600 mb-8">
+      <p className="text-sm text-blue-600 mb-8">
         Please try again or call us directly for assistance.
       </p>
       <div className="space-y-3">
         <button
           onClick={onRetry}
-          className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
         >
           Try Again
         </button>
         <div className="space-y-2">
           <a
             href="tel:+918856819580"
-            className="block inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+            className="block inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
           >
             📞 Call Us: 8856819580
           </a>
           <a
             href="/"
-            className="block inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors"
+            className="block inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors"
           >
             ← Back to Home
           </a>
@@ -577,7 +577,7 @@ export default function CancelPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#faf7f2]">
+    <main className="min-h-screen bg-sky">
       {/* ─── NAV ─── */}
       <Header ctaType="back" backHref="/" />
 
@@ -586,15 +586,15 @@ export default function CancelPage() {
 
       {/* ─── PAGE HEADING ─── */}
       <section className="max-w-5xl mx-auto px-6 pt-14 pb-8">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Ashabi Clinic · Sangli
         </p>
-        <h1 className="font-display text-5xl md:text-6xl text-sage-800 leading-tight mb-2">
+        <h1 className="font-display text-5xl md:text-6xl text-blue-800 leading-tight mb-2">
           Cancel
           <br />
           Appointment
         </h1>
-        <p className="font-display italic text-2xl text-sage-500">
+        <p className="font-display italic text-2xl text-blue-500">
           Manage your booking.
         </p>
       </section>

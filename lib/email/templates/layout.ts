@@ -28,7 +28,7 @@ export function emailLayout({
   style="
     margin:0;
     padding:32px 16px;
-    background:#f6f4ef;
+    background:#F7FAFC;
     font-family:
       -apple-system,
       BlinkMacSystemFont,
@@ -71,7 +71,7 @@ ${preheader ?? ""}
 
 <td
   style="
-    background:#5F7D5A;
+    background:#245889;
     color:white;
     text-align:center;
     padding:42px 32px;
@@ -124,7 +124,7 @@ ${content}
 
 <td
   style="
-    background:#fafafa;
+    background:#EEF5FB;
     border-top:1px solid #ececec;
     padding:28px;
     text-align:center;
@@ -156,7 +156,7 @@ ${CLINIC.email
 <a
   href="${APP.url}"
   style="
-    color:#5F7D5A;
+    color:#245889;
     text-decoration:none;
     font-weight:600;
   "

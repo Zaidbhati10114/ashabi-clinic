@@ -2,11 +2,11 @@
 
 export default function AdminRedirect() {
   return (
-    <main className="min-h-screen bg-[#faf7f2] flex items-center justify-center">
+    <main className="min-h-screen bg-sky flex items-center justify-center">
       <div className="text-center">
-        <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center mx-auto mb-5">
+        <div className="w-14 h-14 bg-mist rounded-full flex items-center justify-center mx-auto mb-5">
           <svg
-            className="animate-spin w-6 h-6 text-sage-600"
+            className="animate-spin w-6 h-6 text-blue-600"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -25,7 +25,7 @@ export default function AdminRedirect() {
             />
           </svg>
         </div>
-        <p className="text-sm text-sage-600">Checking session...</p>
+        <p className="text-sm text-blue-600">Checking session...</p>
       </div>
     </main>
   );

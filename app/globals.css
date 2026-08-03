@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 :root {
+  --sky: #F7FAFC;
+  --mist: #EEF5FB;
+  --blue-200: #CFE0F0;
+  --blue-500: #2F6FAD;
+  --blue-600: #245889;
+  --blue-800: #173B5E;
   --cream: #faf7f2;
   --warm: #f5ede0;
   --sage-500: #527d52;
@@ -18,6 +24,7 @@ html {
 
 body {
   background-color: var(--cream);
+  color: var(--blue-800);
 }
 
 .font-display {

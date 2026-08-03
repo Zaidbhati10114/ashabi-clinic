@@ -18,7 +18,7 @@ export function card({
   cellpadding="0"
   cellspacing="0"
   style="
-    background:#fafaf9;
+    background:#FFFFFF;
     border:1px solid #e5e7eb;
     border-radius:14px;
     margin:30px 0;

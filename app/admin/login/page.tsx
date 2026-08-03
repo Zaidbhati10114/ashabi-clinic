@@ -24,7 +24,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full border border-sage-200 rounded-xl px-4 py-3 text-sm text-sage-800 bg-white placeholder:text-sage-300 focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all ${
+      className={`w-full border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800 bg-white placeholder:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all ${
         props.className ?? ""
       }`}
     />
@@ -43,7 +43,7 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500">
+      <label className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500">
         {label}
       </label>
       {children}
@@ -93,7 +93,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="min-h-screen bg-[#faf7f2] flex items-center justify-center px-6">
+    <main className="min-h-screen bg-sky flex items-center justify-center px-6">
       <motion.div
         variants={fadeUp}
         initial="hidden"
@@ -102,27 +102,27 @@ export default function AdminLogin() {
       >
         {/* Clinic Name */}
         <div className="text-center mb-8">
-          <h1 className="font-display text-4xl text-sage-800 leading-tight mb-2">
+          <h1 className="font-display text-4xl text-blue-800 leading-tight mb-2">
             Ashabi
             <br />
             Clinic
           </h1>
-          <p className="font-display italic text-xl text-sage-500">
+          <p className="font-display italic text-xl text-blue-500">
             Doctor Portal
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white border border-sage-100 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="bg-white border border-blue-100 rounded-2xl shadow-sm p-6 sm:p-8">
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="mb-6">
-              <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+              <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
                 Sign In
               </p>
-              <h2 className="font-display text-3xl text-sage-800 mb-1">
+              <h2 className="font-display text-3xl text-blue-800 mb-1">
                 Admin Login
               </h2>
-              <p className="text-sm text-sage-500">
+              <p className="text-sm text-blue-500">
                 Enter your credentials to access the dashboard.
               </p>
             </div>
@@ -166,7 +166,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading || !username || !password}
-              className="w-full inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -198,10 +198,10 @@ export default function AdminLogin() {
           </form>
 
           {/* Back to Home */}
-          <div className="mt-6 pt-6 border-t border-sage-100 text-center">
+          <div className="mt-6 pt-6 border-t border-blue-100 text-center">
             <a
               href="/"
-              className="inline-flex items-center justify-center gap-2 text-sm text-sage-600 hover:text-sage-800 transition-colors"
+              className="inline-flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
             >
               ← Back to Home
             </a>

@@ -1,9 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
-import { DayPreference } from "@/types/appointment-types";
+import { DayPreference, DAY_PREFERENCE } from "@/types/appointment-types";
+
+const DAYS: DayPreference[] = [
+  DAY_PREFERENCE.MON,
+  DAY_PREFERENCE.TUE,
+  DAY_PREFERENCE.WED,
+  DAY_PREFERENCE.THU,
+  DAY_PREFERENCE.FRI,
+  DAY_PREFERENCE.SAT,
+  DAY_PREFERENCE.SUN,
+];
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -12,7 +22,7 @@ const SLOTS = [
   { id: "evening", label: "Evening", time: "5:00 PM – 8:00 PM", icon: "🌆" },
 ];
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+//const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const STEPS = ["Personal Info", "Schedule", "Reason", "Review"];
 
@@ -22,7 +32,7 @@ type FormData = {
   email: string;
   age: string;
   date: string;
-  dayPreference: DayPreference | "";
+  dayPreference: DayPreference;
   slot: "morning" | "evening" | "";
   reason: string;
 };
@@ -32,7 +42,7 @@ const initial: FormData = {
   phone: "",
   age: "",
   date: "",
-  dayPreference: "",
+  dayPreference: DAY_PREFERENCE.ANY,
   slot: "",
   reason: "",
   email: "",
@@ -51,15 +61,21 @@ const fadeUp: Variants = {
   },
 };
 
-const slideVariants: Variants = {
-  enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 32 : -32 }),
-  center: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" } },
-  exit: (dir: number) => ({
-    opacity: 0,
-    x: dir > 0 ? -32 : 32,
-    transition: { duration: 0.25, ease: "easeIn" },
-  }),
-};
+function getDayFromDate(dateStr: string): DayPreference {
+  if (!dateStr) return DAY_PREFERENCE.ANY;
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const jsDay = new Date(y, m - 1, d).getDay(); // 0=Sun..6=Sat
+  const order: DayPreference[] = [
+    DAY_PREFERENCE.SUN,
+    DAY_PREFERENCE.MON,
+    DAY_PREFERENCE.TUE,
+    DAY_PREFERENCE.WED,
+    DAY_PREFERENCE.THU,
+    DAY_PREFERENCE.FRI,
+    DAY_PREFERENCE.SAT,
+  ];
+  return order[jsDay];
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function getTodayString() {
@@ -87,17 +103,17 @@ function StepIndicator({ current }: { current: number }) {
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300 ${
                 i < current
-                  ? "bg-sage-600 text-white"
+                  ? "bg-blue-600 text-white"
                   : i === current
-                    ? "bg-sage-700 text-white ring-4 ring-sage-100"
-                    : "bg-white border border-sage-200 text-sage-400"
+                    ? "bg-blue-700 text-white ring-4 ring-blue-100"
+                    : "bg-white border border-blue-200 text-blue-600"
               }`}
             >
               {i < current ? "✓" : i + 1}
             </div>
             <span
               className={`text-[10px] font-medium tracking-[0.12em] uppercase hidden sm:block ${
-                i === current ? "text-sage-600" : "text-sage-300"
+                i === current ? "text-blue-600" : "text-blue-500"
               }`}
             >
               {label}
@@ -106,7 +122,7 @@ function StepIndicator({ current }: { current: number }) {
           {i < STEPS.length - 1 && (
             <div
               className={`flex-1 h-px mx-2 mb-5 transition-all duration-500 ${
-                i < current ? "bg-sage-600" : "bg-sage-100"
+                i < current ? "bg-blue-600" : "bg-blue-100"
               }`}
             />
           )}
@@ -130,11 +146,11 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1.5 overflow-visible">
-      <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500">
+      <label className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500">
         {label}
       </label>
       {children}
-      {hint && !error && <p className="text-xs text-sage-300">{hint}</p>}
+      {hint && !error && <p className="text-xs text-blue-500">{hint}</p>}
       {error && <p className="text-xs text-red-400">{error}</p>}
     </div>
   );
@@ -145,7 +161,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full border border-sage-200 rounded-xl px-4 py-3 text-sm text-sage-800 bg-white placeholder:text-sage-300 focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all ${
+      className={`w-full border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800 bg-white placeholder:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all ${
         props.className ?? ""
       }`}
     />
@@ -156,7 +172,6 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
 function BookingForm() {
   type FormErrors = Partial<Record<keyof FormData, string>>;
   const [step, setStep] = useState(0);
-  const [dir, setDir] = useState(1);
   const [data, setData] = useState<FormData>(initial);
   const [errors, setErrors] = useState<Partial<FormErrors>>({});
   const [loading, setLoading] = useState(false); // ← NEW
@@ -192,12 +207,10 @@ function BookingForm() {
 
   function next() {
     if (!validate()) return;
-    setDir(1);
     setStep((s) => s + 1);
   }
 
   function back() {
-    setDir(-1);
     setStep((s) => s - 1);
   }
 
@@ -217,7 +230,7 @@ function BookingForm() {
           email: data.email,
           age: Number(data.age),
           date: data.date,
-          dayPreference: data.dayPreference || "Any",
+          dayPreference: data.dayPreference,
           slot: data.slot,
           reason: data.reason || "Not specified",
         }),
@@ -252,9 +265,9 @@ function BookingForm() {
         animate="show"
         className="text-center py-16"
       >
-        <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center mx-auto mb-5">
+        <div className="w-14 h-14 bg-mist rounded-full flex items-center justify-center mx-auto mb-5">
           <svg
-            className="animate-spin w-6 h-6 text-sage-600"
+            className="animate-spin w-6 h-6 text-blue-600"
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -273,13 +286,13 @@ function BookingForm() {
             />
           </svg>
         </div>
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Please wait
         </p>
-        <h2 className="font-display text-3xl text-sage-800 mb-2">
+        <h2 className="font-display text-3xl text-blue-800 mb-2">
           Sending your request…
         </h2>
-        <p className="font-display italic text-lg text-sage-400">
+        <p className="font-display italic text-lg text-blue-600">
           This will only take a second.
         </p>
       </motion.div>
@@ -295,25 +308,25 @@ function BookingForm() {
         animate="show"
         className="text-center py-8"
       >
-        <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
+        <div className="w-14 h-14 bg-mist rounded-full flex items-center justify-center text-2xl mx-auto mb-5">
           ✅
         </div>
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Request Received
         </p>
-        <h2 className="font-display text-4xl text-sage-800 mb-2">
+        <h2 className="font-display text-4xl text-blue-800 mb-2">
           Booking Confirmed!
         </h2>
-        <p className="font-display italic text-xl text-sage-500 mb-6">
+        <p className="font-display italic text-xl text-blue-500 mb-6">
           We&apos;ll be in touch shortly.
         </p>
-        <p className="text-sm text-sage-500 mb-8">
+        <p className="text-sm text-blue-500 mb-8">
           Confirmation will be sent to {data.email}
-          <span className="font-medium text-sage-700">{data.phone}</span>
+          <span className="font-medium text-blue-700">{data.phone}</span>
         </p>
 
-        <div className="bg-white border border-sage-100 rounded-xl p-5 text-left mb-8 space-y-0">
-          <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-4">
+        <div className="bg-white border border-blue-100 rounded-xl p-5 text-left mb-8 space-y-0">
+          <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-4">
             Booking Summary
           </p>
           {[
@@ -330,12 +343,12 @@ function BookingForm() {
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="flex justify-between items-start py-2.5 border-b border-sage-100 last:border-0"
+              className="flex justify-between items-start py-2.5 border-b border-blue-100 last:border-0"
             >
-              <span className="text-xs text-sage-400 uppercase tracking-widest">
+              <span className="text-xs text-blue-600 uppercase tracking-widest">
                 {label}
               </span>
-              <span className="font-display text-base text-sage-800 text-right">
+              <span className="font-display text-base text-blue-800 text-right">
                 {value}
               </span>
             </div>
@@ -344,7 +357,7 @@ function BookingForm() {
 
         <a
           href="/"
-          className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+          className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
         >
           ← Back to Home
         </a>
@@ -357,13 +370,13 @@ function BookingForm() {
     // STEP 0 — Personal Info
     <div key="step0" className="space-y-5">
       <div className="mb-6">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Step 1 of 4
         </p>
-        <h2 className="font-display text-4xl text-sage-800 mb-1">
+        <h2 className="font-display text-4xl text-blue-800 mb-1">
           Personal Info
         </h2>
-        <p className="text-sm text-sage-500">
+        <p className="text-sm text-blue-500">
           Tell us a little about yourself.
         </p>
       </div>
@@ -407,11 +420,11 @@ function BookingForm() {
     // STEP 1 — Schedule
     <div key="step1" className="space-y-5">
       <div className="mb-6">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Step 2 of 4
         </p>
-        <h2 className="font-display text-4xl text-sage-800 mb-1">Schedule</h2>
-        <p className="text-sm text-sage-500">
+        <h2 className="font-display text-4xl text-blue-800 mb-1">Schedule</h2>
+        <p className="text-sm text-blue-500">
           Pick your preferred date and time slot.
         </p>
       </div>
@@ -421,27 +434,39 @@ function BookingForm() {
           type="date"
           value={data.date}
           min={getTodayString()}
-          onChange={(e) => set("date", e.target.value)}
+          onChange={(e) => {
+            const newDate = e.target.value;
+            setData((prev) => ({
+              ...prev,
+              date: newDate,
+              dayPreference: getDayFromDate(newDate),
+            }));
+            setErrors((prev) => ({ ...prev, date: "" }));
+          }}
         />
       </Field>
 
-      <Field label="Day Preference" hint="Optional — skip if any day works">
+      <Field
+        label="Day"
+        hint={
+          data.dayPreference !== DAY_PREFERENCE.ANY
+            ? "Automatically set based on your selected date"
+            : "Select a date to see the day"
+        }
+      >
         <div className="flex flex-wrap gap-2">
           {DAYS.map((day) => (
-            <button
+            <div
               key={day}
-              type="button"
-              onClick={() =>
-                set("dayPreference", data.dayPreference === day ? "" : day)
-              }
-              className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
+              aria-disabled
+              className={`px-3 py-2 rounded-xl text-xs font-medium border select-none ${
                 data.dayPreference === day
-                  ? "bg-sage-600 text-white border-sage-600"
-                  : "bg-white text-sage-600 border-sage-200 hover:border-sage-400 hover:bg-sage-50"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-blue-300 border-blue-100"
               }`}
             >
               {day}
-            </button>
+            </div>
           ))}
         </div>
       </Field>
@@ -455,15 +480,15 @@ function BookingForm() {
               onClick={() => set("slot", slot.id)}
               className={`flex flex-col items-center gap-1.5 p-4 rounded-xl border transition-all ${
                 data.slot === slot.id
-                  ? "border-sage-600 bg-[#f0f5f0] text-sage-700 shadow-sm"
-                  : "border-sage-100 bg-white text-sage-500 hover:border-sage-300 hover:shadow-sm"
+                  ? "border-blue-600 bg-mist text-blue-700 shadow-sm"
+                  : "border-blue-100 bg-white text-blue-500 hover:border-blue-300 hover:shadow-sm"
               }`}
             >
               <span className="text-2xl">{slot.icon}</span>
-              <span className="font-medium text-sm text-sage-800">
+              <span className="font-medium text-sm text-blue-800">
                 {slot.label}
               </span>
-              <span className="text-xs text-sage-400">{slot.time}</span>
+              <span className="text-xs text-blue-600">{slot.time}</span>
             </button>
           ))}
         </div>
@@ -473,13 +498,13 @@ function BookingForm() {
     // STEP 2 — Reason
     <div key="step2" className="space-y-5">
       <div className="mb-6">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Step 3 of 4
         </p>
-        <h2 className="font-display text-4xl text-sage-800 mb-1">
+        <h2 className="font-display text-4xl text-blue-800 mb-1">
           Reason for Visit
         </h2>
-        <p className="text-sm text-sage-500">
+        <p className="text-sm text-blue-500">
           Briefly describe your symptoms or concern.
         </p>
       </div>
@@ -492,7 +517,7 @@ function BookingForm() {
           placeholder="e.g. Fever and cold since 3 days, recurring headache..."
           value={data.reason}
           onChange={(e) => set("reason", e.target.value)}
-          className="w-full border border-sage-200 rounded-xl px-4 py-3 text-sm text-sage-800 bg-white placeholder:text-sage-300 focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all resize-none"
+          className="w-full border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800 bg-white placeholder:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all resize-none"
         />
       </Field>
     </div>,
@@ -500,18 +525,18 @@ function BookingForm() {
     // STEP 3 — Review
     <div key="step3" className="space-y-5">
       <div className="mb-6">
-        <p className="text-xs font-medium tracking-[0.2em] text-sage-500 uppercase mb-2">
+        <p className="text-xs font-medium tracking-[0.2em] text-blue-500 uppercase mb-2">
           Step 4 of 4
         </p>
-        <h2 className="font-display text-4xl text-sage-800 mb-1">
+        <h2 className="font-display text-4xl text-blue-800 mb-1">
           Review & Confirm
         </h2>
-        <p className="text-sm text-sage-500">
+        <p className="text-sm text-blue-500">
           Check your details before confirming.
         </p>
       </div>
 
-      <div className="bg-white border border-sage-100 rounded-xl p-5">
+      <div className="bg-white border border-blue-100 rounded-xl p-5">
         {[
           { label: "Name", value: data.name },
           { label: "Phone", value: data.phone },
@@ -529,19 +554,19 @@ function BookingForm() {
         ].map(({ label, value }) => (
           <div
             key={label}
-            className="flex justify-between items-start py-2.5 border-b border-sage-100 last:border-0"
+            className="flex justify-between items-start py-2.5 border-b border-blue-100 last:border-0"
           >
-            <span className="text-xs text-sage-400 uppercase tracking-widest shrink-0">
+            <span className="text-xs text-blue-600 uppercase tracking-widest shrink-0">
               {label}
             </span>
-            <span className="font-display text-base text-sage-800 text-right ml-4">
+            <span className="font-display text-base text-blue-800 text-right ml-4">
               {value}
             </span>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-sage-400 text-center leading-relaxed">
+      <p className="text-xs text-blue-600 text-center leading-relaxed">
         We&apos;ll receive your request and confirm your slot shortly.
       </p>
 
@@ -551,7 +576,7 @@ function BookingForm() {
           <p className="text-xs text-red-500 mb-1">{sendError}</p>
           <a
             href="tel:+919880919789"
-            className="text-xs font-medium text-sage-600 underline"
+            className="text-xs font-medium text-blue-600 underline"
           >
             Or call us directly: 98809 19789
           </a>
@@ -565,26 +590,13 @@ function BookingForm() {
     <div className="w-full">
       <StepIndicator current={step} />
 
-      <div className="relative">
-        <AnimatePresence mode="wait" custom={dir}>
-          <motion.div
-            key={step}
-            custom={dir}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-          >
-            {steps[step]}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+      <div>{steps[step]}</div>
 
       <div className="flex justify-between items-center mt-8 gap-3">
         {step > 0 ? (
           <a
             onClick={back}
-            className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-50 transition-colors cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-50 transition-colors cursor-pointer"
           >
             ← Back
           </a>
@@ -595,7 +607,7 @@ function BookingForm() {
         {step < STEPS.length - 1 ? (
           <button
             onClick={next}
-            className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors"
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors"
           >
             Continue →
           </button>
@@ -603,7 +615,7 @@ function BookingForm() {
           <button
             onClick={confirm}
             disabled={loading}
-            className="inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-sage-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-full hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
             Confirm Booking →
           </button>

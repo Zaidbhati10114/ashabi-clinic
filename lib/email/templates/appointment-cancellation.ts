@@ -101,7 +101,7 @@ ${CLINIC.email ? `✉️ ${CLINIC.email}<br><br>` : ""}
 
 <a
 href="${APP.url}"
-style="color:#5F7D5A;text-decoration:none;font-weight:600;"
+style="color:#245889;text-decoration:none;font-weight:600;"
 >
 Visit Ashabi Clinic
 </a>

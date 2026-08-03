@@ -13,6 +13,20 @@ const config: Config = {
         body: ['DM Sans', 'sans-serif'],
       },
       colors: {
+        blue: {
+          50: '#F7FAFC',
+          100: '#EEF5FB',
+          200: '#CFE0F0',
+          300: '#9FC5E5',
+          400: '#6C9FCC',
+          500: '#2F6FAD',
+          600: '#245889',
+          700: '#1D4A75',
+          800: '#173B5E',
+          900: '#102B45',
+        },
+        mist: '#EEF5FB',
+        sky: '#F7FAFC',
         sage: {
           50: '#f4f7f4',
           100: '#e6ede6',
