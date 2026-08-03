@@ -1,7 +1,7 @@
 export const CLINIC = {
     name: "Dr. Sahirabanu Clinic",
 
-    email: process.env.SMTP_USER!,
+    email: "appointments@ashabiclinic.com",
 
     phone: "+918856819580",
 

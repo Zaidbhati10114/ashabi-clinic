@@ -322,7 +322,6 @@ function BookingForm() {
         </p>
         <p className="text-sm text-blue-500 mb-8">
           Confirmation will be sent to {data.email}
-          <span className="font-medium text-blue-700">{data.phone}</span>
         </p>
 
         <div className="bg-white border border-blue-100 rounded-xl p-5 text-left mb-8 space-y-0">
