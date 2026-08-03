@@ -100,7 +100,7 @@ You can also visit our website anytime.
 
 <a
 href="${APP.url}"
-style="color:#5F7D5A;font-weight:600;text-decoration:none;"
+style="color:#245889;font-weight:600;text-decoration:none;"
 >
 ${APP.url}
 </a>

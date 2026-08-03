@@ -17,15 +17,11 @@ export async function sendMail({
     html,
     text,
 }: SendMailOptions) {
-    const recipient =
-        process.env.NODE_ENV === "development" &&
-            process.env.DEV_EMAIL_OVERRIDE
-            ? process.env.DEV_EMAIL_OVERRIDE
-            : to;
+
     try {
         const { data, error } = await resend.emails.send({
             from: process.env.EMAIL_FROM!,
-            to: recipient!,
+            to,
             subject,
             html,
             text,

@@ -8,7 +8,7 @@ type ButtonProps = {
 export function button({
     text,
     href,
-    backgroundColor = "#5F7D5A",
+    backgroundColor = "#245889",
     textColor = "#ffffff",
 }: ButtonProps): string {
     return `

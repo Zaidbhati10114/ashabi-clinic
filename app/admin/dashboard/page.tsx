@@ -54,16 +54,16 @@ function StatsCard({
   label,
   value,
   icon,
-  color = "sage",
+  color = "blue",
 }: {
   label: string;
   value: number;
   icon: string;
-  color?: "sage" | "yellow" | "green" | "red";
+  color?: "blue" | "yellow" | "green" | "red";
 }) {
   const bgColor =
-    color === "sage"
-      ? "bg-sage-100"
+    color === "blue"
+      ? "bg-blue-100"
       : color === "yellow"
         ? "bg-yellow-100"
         : color === "green"
@@ -71,11 +71,11 @@ function StatsCard({
           : "bg-red-100";
 
   return (
-    <div className="bg-white border border-sage-100 rounded-xl p-6">
+    <div className="bg-white border border-blue-100 rounded-xl p-6">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-3xl font-display text-sage-800">{value}</p>
-          <p className="text-sm text-sage-600">{label}</p>
+          <p className="text-3xl font-display text-blue-800">{value}</p>
+          <p className="text-sm text-blue-600">{label}</p>
         </div>
         <div
           className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center text-2xl`}
@@ -119,8 +119,8 @@ function FilterTabs({
           onClick={() => onFilterChange(filter.value)}
           className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
             activeFilter === filter.value
-              ? "bg-sage-600 text-white border-sage-600"
-              : "bg-white text-sage-600 border-sage-200 hover:border-sage-400 hover:bg-sage-50"
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-white text-blue-600 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
           }`}
         >
           {filter.label}
@@ -144,25 +144,25 @@ function DateRangeFilter({
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       <div className="flex-1">
-        <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 block mb-1.5">
+        <label className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500 block mb-1.5">
           From Date
         </label>
         <input
           type="date"
           value={fromDate}
           onChange={(e) => onFromDateChange(e.target.value)}
-          className="w-full border border-sage-200 rounded-xl px-3 py-2 text-sm text-sage-800 bg-white focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all"
+          className="w-full border border-blue-200 rounded-xl px-3 py-2 text-sm text-blue-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all"
         />
       </div>
       <div className="flex-1">
-        <label className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 block mb-1.5">
+        <label className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500 block mb-1.5">
           To Date
         </label>
         <input
           type="date"
           value={toDate}
           onChange={(e) => onToDateChange(e.target.value)}
-          className="w-full border border-sage-200 rounded-xl px-3 py-2 text-sm text-sage-800 bg-white focus:outline-none focus:ring-2 focus:ring-sage-300 focus:border-transparent transition-all"
+          className="w-full border border-blue-200 rounded-xl px-3 py-2 text-sm text-blue-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-all"
         />
       </div>
     </div>
@@ -181,21 +181,21 @@ function AppointmentCard({
   return (
     <motion.div
       variants={fadeUp}
-      className="bg-white border border-sage-100 rounded-xl p-5"
+      className="bg-white border border-blue-100 rounded-xl p-5"
     >
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="font-display text-xl text-sage-800 mb-1">
+          <h3 className="font-display text-xl text-blue-800 mb-1">
             {appointment.name}
           </h3>
-          <p className="text-sm text-sage-600">
+          <p className="text-sm text-blue-600">
             {appointment.phone} • {appointment.age} years
           </p>
         </div>
         <StatusBadge status={appointment.status} />
       </div>
 
-      <div className="space-y-2 text-sm text-sage-600 mb-4">
+      <div className="space-y-2 text-sm text-blue-600 mb-4">
         <p className="flex items-center gap-2">
           📅 {formatDate(appointment.date)}
         </p>
@@ -216,13 +216,13 @@ function AppointmentCard({
         <div className="flex gap-2">
           <button
             onClick={() => onConfirm(appointment._id)}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-sage-600 text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-sage-700 transition-colors"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-blue-700 transition-colors"
           >
             ✓ Confirm
           </button>
           <button
             onClick={() => onCancel(appointment._id)}
-            className="flex-1 inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sage-50 transition-colors"
+            className="flex-1 inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-blue-50 transition-colors"
           >
             ✕ Cancel
           </button>
@@ -316,11 +316,11 @@ export default function AdminDashboard() {
   // ─── LOADING STATE ───────────────────────────────────────────────────────────
   if (appointments === undefined) {
     return (
-      <main className="min-h-screen bg-[#faf7f2]">
+      <main className="min-h-screen bg-sky">
         <div className="text-center py-32">
-          <div className="w-14 h-14 bg-[#f0f5f0] rounded-full flex items-center justify-center mx-auto mb-5">
+          <div className="w-14 h-14 bg-mist rounded-full flex items-center justify-center mx-auto mb-5">
             <svg
-              className="animate-spin w-6 h-6 text-sage-600"
+              className="animate-spin w-6 h-6 text-blue-600"
               fill="none"
               viewBox="0 0 24 24"
             >
@@ -339,26 +339,26 @@ export default function AdminDashboard() {
               />
             </svg>
           </div>
-          <p className="text-sm text-sage-600">Loading dashboard...</p>
+          <p className="text-sm text-blue-600">Loading dashboard...</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#faf7f2]">
+    <main className="min-h-screen bg-sky">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-[#faf7f2]/90 backdrop-blur-sm border-b border-sage-100">
+      <div className="sticky top-0 z-50 bg-sky/90 backdrop-blur-sm border-b border-blue-100">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="font-display text-2xl text-sage-800">
+            <h1 className="font-display text-2xl text-blue-800">
               Doctor Dashboard
             </h1>
-            <p className="text-sm text-sage-600">Ashabi Clinic</p>
+            <p className="text-sm text-blue-600">Ashabi Clinic</p>
           </div>
           <button
             onClick={handleLogout}
-            className="inline-flex items-center justify-center gap-2 border border-sage-300 text-sage-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-sage-50 transition-colors"
+            className="inline-flex items-center justify-center gap-2 border border-blue-300 text-blue-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-blue-50 transition-colors"
           >
             Sign Out →
           </button>
@@ -384,7 +384,7 @@ export default function AdminDashboard() {
             label="Confirmed"
             value={stats.confirmed}
             icon="✓"
-            color="sage"
+            color="blue"
           />
           <StatsCard
             label="Cancelled"
@@ -400,11 +400,11 @@ export default function AdminDashboard() {
           initial="hidden"
           animate="show"
           transition={{ delay: 0.1 }}
-          className="bg-white border border-sage-100 rounded-xl p-5 mb-6"
+          className="bg-white border border-blue-100 rounded-xl p-5 mb-6"
         >
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
-              <p className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 mb-3">
+              <p className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500 mb-3">
                 Status Filter
               </p>
               <FilterTabs
@@ -413,7 +413,7 @@ export default function AdminDashboard() {
               />
             </div>
             <div className="lg:w-80">
-              <p className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500 mb-3">
+              <p className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500 mb-3">
                 Date Range
               </p>
               <DateRangeFilter
@@ -434,15 +434,15 @@ export default function AdminDashboard() {
           transition={{ delay: 0.2 }}
         >
           <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-medium tracking-[0.12em] uppercase text-sage-500">
+            <p className="text-xs font-medium tracking-[0.12em] uppercase text-blue-500">
               Showing {filteredAppointments.length} appointment
               {filteredAppointments.length !== 1 ? "s" : ""}
             </p>
           </div>
 
           {filteredAppointments.length === 0 ? (
-            <div className="bg-white border border-sage-100 rounded-xl p-8 text-center">
-              <p className="text-sage-500">No appointments found</p>
+            <div className="bg-white border border-blue-100 rounded-xl p-8 text-center">
+              <p className="text-blue-500">No appointments found</p>
             </div>
           ) : (
             <div className="space-y-4">
