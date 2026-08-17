@@ -7,7 +7,7 @@ export async function GET() {
     const body = `User-agent: *
 Allow: /
 
-Sitemap: https://ashabiclinic.com/sitemap.xml
+Sitemap: https://www.ashabiclinic.com/sitemap.xml
 `;
 
     return new Response(body, {

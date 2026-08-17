@@ -5,7 +5,7 @@
 // Add more <url> entries below as you build out real pages.
 
 export async function GET() {
-    const baseUrl = "https://ashabiclinic.com";
+    const baseUrl = "https://www.ashabiclinic.com";
 
     const pages = [
         { path: "", priority: "1.0" },
