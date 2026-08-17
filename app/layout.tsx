@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "../app/providers /ConvexClientProvider";
+import { getClinicSchema } from "@/lib/clinic-schema";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ashabiclinic.com"),
