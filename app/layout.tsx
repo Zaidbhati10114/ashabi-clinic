@@ -5,7 +5,7 @@ import ConvexClientProvider from "../app/providers /ConvexClientProvider";
 import { getClinicSchema } from "@/lib/clinic-schema";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ashabiclinic.com"),
+  metadataBase: new URL("https://www.ashabiclinic.com"),
   title: {
     default: "Ashabi Clinic | Dr. Sahirabanu Faruk Bhati",
     template: "%s | Ashabi Clinic Sangli",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://ashabiclinic.com",
+    canonical: "https://www.ashabiclinic.com",
   },
 };
 
