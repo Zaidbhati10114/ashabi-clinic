@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "Ashabi Clinic | Dr. Sahirabanu Faruk Bhati",
     description:
       "Homoeopathic Clinic in Sangli, Maharashtra. Practicing since 2008. Compassionate care for the whole family.",
-    url: "https://ashabiclinic.com",
+    url: "https://www.ashabiclinic.com",
     siteName: "Ashabi Clinic",
     locale: "en_IN",
     type: "website",
