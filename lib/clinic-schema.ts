@@ -11,10 +11,10 @@ export function getClinicSchema() {
         "alternateName": "Ashabi Homeopathy & General Clinic",
         "description":
             "Ashabi Clinic offers homeopathy and general clinic consultations in Sangli, Maharashtra, under Dr. Sahirabanu Faruk Bhati.",
-        "url": "https://ashabiclinic.com",
+        "url": "https://www.ashabiclinic.com",
         "telephone": "+91-8856819580",
         "priceRange": "$$",
-        "image": "https://ashabiclinic.com/og-image.jpg", // update to a real photo of the clinic
+        "image": "https://www.ashabiclinic.com/og-image.jpg",
         "medicalSpecialty": ["Homeopathic", "GeneralPractice"],
         "address": {
             "@type": "PostalAddress",
