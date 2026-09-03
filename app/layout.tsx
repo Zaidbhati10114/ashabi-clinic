@@ -3,6 +3,7 @@ import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import ConvexClientProvider from "../app/providers /ConvexClientProvider";
 import { getClinicSchema } from "@/lib/clinic-schema";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ashabiclinic.com"),
@@ -83,6 +84,7 @@ export default function RootLayout({
       </head>
       <body className="font-body bg-cream antialiased">
         <ConvexClientProvider>{children}</ConvexClientProvider>
+        <Analytics />
       </body>
     </html>
   );
